@@ -1,15 +1,18 @@
 # File: target.cmake, Created on 2017. 04. 14. 16:49, Author: Vader
 
+include_guard(GLOBAL)
 
 include(ExternalProject)
-include(cmake/wish_create.cmake)
-include(cmake/wish_date.cmake)
-include(cmake/wish_git.cmake)
-include(cmake/wish_util.cmake)
-include(cmake/wish_compiler_flags.cmake)
 
+include(cmake/wish_compiler_flags.cmake)
+include(cmake/wish_configuration.cmake)
+include(cmake/wish_create.cmake)
+include(cmake/wish_system.cmake)
+include(cmake/wish_version.cmake)
 
 # -------------------------------------------------------------------------------------------------
+
+message(STATUS "Wish version: ${wish_version}")
 
 macro(wish_force_colored_output value)
     if (${value})

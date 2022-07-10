@@ -1,5 +1,7 @@
 #
 
+include_guard(GLOBAL)
+
 # --- Warning -----------------------------------------------------------------------------------
 
 function(_aux_wish_collect_compiler_flags output)
@@ -57,8 +59,8 @@ endfunction()
 #		GNU VERSION_GREATER 7.0 -Wduplicated-branches
 #	)
 function(wish_warning)
-	_aux_wish_collect_compiler_flags(flagsff ${ARGV})
-	message(STATUS "Warning flags: ${flagsff}")
+	_aux_wish_collect_compiler_flags(flags ${ARGV})
+	message(STATUS "Warning flags: ${flags}")
 endfunction()
 
 # -------------------------------------------------------------------------------------------------
@@ -68,8 +70,8 @@ endfunction()
 #		GNU VERSION_LESS 13.0 -fcoroutines
 #	)
 function(wish_compiler_flags versioned_flag_list)
-	_aux_wish_collect_compiler_flags(flagsff ${ARGV})
-	message(STATUS "Compiler flags: ${flagsff}")
+	_aux_wish_collect_compiler_flags(flags ${ARGV})
+	message(STATUS "Compiler flags: ${flags}")
 endfunction()
 
 # -------------------------------------------------------------------------------------------------

@@ -1,5 +1,8 @@
 # File: target.cmake, Created on 2017. 04. 14. 16:49, Author: Vader
 
+include_guard(GLOBAL)
+
+include(cmake/wish_version.cmake)
 
 # --- Options --------------------------------------------------------------------------------------
 
@@ -20,26 +23,37 @@ macro(wish_disable_debug)
 endmacro()
 
 set(__wish_static_link_std)
-
 macro(wish_static_link_std)
 	set(__wish_static_link_std -static)
 endmacro()
 
 # --- Group ----------------------------------------------------------------------------------------
 
-set(__wish_current_group_stack)
-macro(wish_create_group arg_GROUP)
-	list(APPEND __wish_current_group_stack ${arg_GROUP})
+set(__wish_current_group)
+macro(wish_group name)
+	set(__wish_current_group ${name})
+
+	if (DEFINED __wish_group_${name})
+		return()
+	endif()
+
+	set(__wish_group_${name})
+
+	add_custom_target(${name})
+	foreach(alias ${ARGN})
+		add_custom_target(${alias} DEPENDS ${name})
+	endforeach()
 endmacro()
-macro(wish_end_group)
-	list(REMOVE_AT __wish_current_group_stack -1)
+
+macro(__wish_add_member_to_group target)
+	add_dependencies(${__wish_current_group} ${target})
 endmacro()
 
 # --- IDE / Build info -----------------------------------------------------------------------------
 
 set(__wish_external_include_directories)
 set(__wish_external_defines)
-set(__wish_external_raw_arguments "wish_version(3.0)")
+set(__wish_external_raw_arguments "wish_version(${wish_version})")
 
 ## Creates wish_ide target that can be used to obtain various information for IDEs
 function(wish_create_ide_target)
@@ -53,7 +67,7 @@ function(wish_create_ide_target)
 	)
 
 	add_custom_target(wish
-		COMMAND ${CMAKE_COMMAND} -E echo Wish
+		COMMAND ${CMAKE_COMMAND} -E echo "Wish version: ${wish_version}"
 	)
 
     file(WRITE "${CMAKE_BINARY_DIR}/__wish_external_raw_arguments.new.txt" "${__wish_external_raw_arguments}")
@@ -74,7 +88,7 @@ endfunction()
 ## Defines get_NAME for fetching the ExternalProject and ext_NAME as lightweight INTERFACE target
 ## Unrecognized parameters after INCLUDE_DIR, LINK or DEFINE are forbidden.
 function(wish_create_external)
-	cmake_parse_arguments(arg "DEBUG;SKIP_CONFIGURE_AND_BUILD;SKIP_CONFIGURE;SKIP_BUILD" "NAME" "INCLUDE_DIR;LINK;DEFINE" ${ARGN})
+	cmake_parse_arguments(arg "DEBUG;NO_GROUP;SKIP_CONFIGURE_AND_BUILD;SKIP_CONFIGURE;SKIP_BUILD" "NAME" "INCLUDE_DIR;LINK;DEFINE" ${ARGN})
 
 	set(temp_list ${__wish_external_raw_arguments})
 	list(APPEND temp_list ${ARGN})
@@ -131,11 +145,9 @@ function(wish_create_external)
 	set(__wish_external_defines ${temp_list} PARENT_SCOPE)
 
 	# group
-	foreach(group ${__wish_current_group_stack})
-		set(group_members ${${group}})
-		list(APPEND group_members get_${arg_NAME})
-		set(${group} ${group_members} PARENT_SCOPE)
-	endforeach()
+	if (NOT ${arg_NO_GROUP})
+		__wish_add_member_to_group(get_${arg_NAME})
+	endif()
 
 	# debug
 	if(arg_DEBUG OR __wish_global_debug)
@@ -150,7 +162,8 @@ function(wish_create_external)
 		message("	SkipBld   : ${arg_SKIP_BUILD}")
 		message("	SkipCfgBld: ${arg_SKIP_CONFIGURE_AND_BUILD}")
 		message("	Unparsed  : ${arg_UNPARSED_ARGUMENTS}")
-		message("	Group     : ${__wish_current_group_stack}")
+		message("	NoGroup   : ${arg_NO_GROUP}")
+		message("	Group     : ${__wish_current_group}")
 	endif()
 endfunction()
 
@@ -197,7 +210,7 @@ function(wish_generate out_generated_outputs)
 			continue()
 		endif()
 
-		file(GLOB_RECURSE matching_files RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS ${arg_${generator}})
+		file(GLOB_RECURSE matching_files LIST_DIRECTORIES false RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS ${arg_${generator}})
 
 		foreach(matching_file ${matching_files})
 			set(output_files_rel "")
@@ -243,7 +256,7 @@ endfunction()
 # --- Executable -----------------------------------------------------------------------------------
 
 function(wish_create_executable)
-	cmake_parse_arguments(arg "DEBUG" "TARGET" "SOURCE;OBJECT;GENERATE;LINK" ${ARGN})
+	cmake_parse_arguments(arg "DEBUG;NO_GROUP" "TARGET" "SOURCE;OBJECT;GENERATE;LINK" ${ARGN})
 
 	# check
 	if(NOT arg_SOURCE AND NOT arg_OBJECT)
@@ -251,7 +264,7 @@ function(wish_create_executable)
 	endif()
 
 	# glob
-	file(GLOB_RECURSE matching_sources RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS ${arg_SOURCE})
+	file(GLOB_RECURSE matching_sources LIST_DIRECTORIES false RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS ${arg_SOURCE})
 	foreach(obj ${arg_OBJECT})
 		list(APPEND matching_sources $<TARGET_OBJECTS:${obj}>)
 	endforeach()
@@ -270,11 +283,9 @@ function(wish_create_executable)
 	target_link_libraries(${arg_TARGET} ${obj})
 
 	# group
-	foreach(group ${__wish_current_group_stack})
-		set(group_members ${${group}})
-		list(APPEND group_members ${arg_TARGET})
-		set(${group} ${group_members} PARENT_SCOPE)
-	endforeach()
+	if (NOT ${arg_NO_GROUP})
+		__wish_add_member_to_group(${arg_TARGET})
+	endif()
 
 	# debug
 	if(arg_DEBUG OR __wish_global_debug)
@@ -283,17 +294,17 @@ function(wish_create_executable)
 		message("	Source    : ${matching_sources}")
 		message("	Object    : ${arg_OBJECT}")
 		message("	Link      : ${arg_LINK}")
-		message("	Group     : ${__wish_current_group_stack}")
+		message("	NoGroup   : ${arg_NO_GROUP}")
+		message("	Group     : ${__wish_current_group}")
 	endif()
 endfunction()
 
 # --- Library --------------------------------------------------------------------------------------
 
 function(wish_create_library)
-	cmake_parse_arguments(arg "DEBUG;STATIC;SHARED;INTERFACE" "TARGET" "SOURCE;OBJECT;GENERATE;LINK" ${ARGN})
+	cmake_parse_arguments(arg "DEBUG;NO_GROUP;STATIC;SHARED;INTERFACE" "TARGET" "SOURCE;OBJECT;GENERATE;LINK" ${ARGN})
 
 	# check
-	list(GET arg_TARGET 0 arg_target_name)
 #	if(NOT arg_SOURCE AND NOT arg_OBJECT)
 #		message(FATAL_ERROR "At least one SOURCE or OBJECT should be given.")
 #		# TODO P5: Target might be INTERFACE
@@ -301,7 +312,7 @@ function(wish_create_library)
 
 	# glob
 	if(arg_SOURCE)
-		file(GLOB_RECURSE matching_sources RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS ${arg_SOURCE})
+		file(GLOB_RECURSE matching_sources LIST_DIRECTORIES false RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS ${arg_SOURCE})
 	endif()
 	foreach(obj ${arg_OBJECT})
 		list(APPEND matching_sources $<TARGET_OBJECTS:${obj}>)
@@ -333,11 +344,9 @@ function(wish_create_library)
 #	target_link_libraries(${arg_TARGET} $<IF:$<BOOL:${arg_INTERFACE}>,"INTERFACE",""> ${arg_LINK})
 
 	# group
-	foreach(group ${__wish_current_group_stack})
-		set(group_members ${${group}})
-		list(APPEND group_members ${arg_target_name})
-		set(${group} ${group_members} PARENT_SCOPE)
-	endforeach()
+	if (NOT ${arg_NO_GROUP})
+		__wish_add_member_to_group(${arg_TARGET})
+	endif()
 
 	# debug
 	if(arg_DEBUG OR __wish_global_debug)
@@ -351,14 +360,15 @@ function(wish_create_library)
 		message("	Static    : ${arg_STATIC}")
 		message("	Shared    : ${arg_SHARED}")
 		message("	Interface : ${arg_INTERFACE}")
-		message("	Group     : ${__wish_current_group_stack}")
+		message("	NoGroup   : ${arg_NO_GROUP}")
+		message("	Group     : ${__wish_current_group}")
 	endif()
 endfunction()
 
 # --- Object ---------------------------------------------------------------------------------------
 
 function(wish_create_object)
-	cmake_parse_arguments(arg "DEBUG" "TARGET" "SOURCE;OBJECT;GENERATE;LINK" ${ARGN})
+	cmake_parse_arguments(arg "DEBUG;NO_GROUP" "TARGET" "SOURCE;OBJECT;GENERATE;LINK" ${ARGN})
 
 	# check
 	if(NOT arg_SOURCE AND NOT arg_OBJECT)
@@ -366,7 +376,7 @@ function(wish_create_object)
 	endif()
 
 	# glob
-	file(GLOB_RECURSE matching_sources RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS ${arg_SOURCE})
+	file(GLOB_RECURSE matching_sources LIST_DIRECTORIES false RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS ${arg_SOURCE})
 	foreach(obj ${arg_OBJECT})
 		list(APPEND matching_sources $<TARGET_OBJECTS:${obj}>)
 	endforeach()
@@ -383,11 +393,9 @@ function(wish_create_object)
 	add_library(${arg_TARGET} OBJECT ${every_source})
 
 	# group
-	foreach(group ${__wish_current_group_stack})
-		set(group_members ${${group}})
-		list(APPEND group_members ${arg_TARGET})
-		set(${group} ${group_members} PARENT_SCOPE)
-	endforeach()
+	if (NOT ${arg_NO_GROUP})
+		__wish_add_member_to_group(${arg_TARGET})
+	endif()
 
 	# debug
 	if(arg_DEBUG OR __wish_global_debug)
@@ -398,7 +406,8 @@ function(wish_create_object)
 		message("	Generated : ${generated_outputs}")
 		message("	Link      : ${arg_LINK}")
 		message("	Object    : ${arg_OBJECT}")
-		message("	Group     : ${__wish_current_group_stack}")
+		message("	NoGroup   : ${arg_NO_GROUP}")
+		message("	Group     : ${__wish_current_group}")
 	endif()
 endfunction()
 

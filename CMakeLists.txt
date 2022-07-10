@@ -3,28 +3,22 @@
 cmake_minimum_required(VERSION 3.20)
 project(wish)
 
-include(cmake/wish.cmake)
-
-# --------------------------------------------------------------------------------------------------
-
 #set(CMAKE_VERBOSE_MAKEFILE off)
 #set(CMAKE_BUILD_TYPE DEBUG)
 #set(CMAKE_BUILD_TYPE RELEASE)
 
-if (NOT CMAKE_BUILD_TYPE)
-	set(CMAKE_BUILD_TYPE RELEASE)
-endif()
-string(TOLOWER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE)
-#set(CMAKE_BUILD_TYPE WISH_BUILD_TYPE_LOWER)
+include(cmake/wish.cmake)
 
-set(CMAKE_CONFIGURATION_TYPES "Debug;Release;Dev" CACHE STRING "" FORCE)
+# --------------------------------------------------------------------------------------------------
+
+wish_configurations(DEFAULT Release Dev Debug)
 
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 message(STATUS "Processor count: ${WISH_PROCESSOR_COUNT}")
 message(STATUS "CXX compiler id: ${CMAKE_CXX_COMPILER_ID}")
 message(STATUS "CXX compiler version: ${CMAKE_CXX_COMPILER_VERSION}")
-message(STATUS "Git branch: ${WISH_GIT_BRANCH}")
-message(STATUS "Git commit: ${WISH_GIT_COMMIT_HASH}")
+#message(STATUS "Git branch: ${WISH_GIT_BRANCH}")
+#message(STATUS "Git commit: ${WISH_GIT_COMMIT_HASH}")
 
 # TODO ---------------------------------------------------------------------------------------------
 
@@ -119,23 +113,18 @@ wish_compiler_flags(
 	GNU -std=c++23
 )
 
-# Tooling ------------------------------------------------------------------------------------------
-
-# Sparing tooling from supporting requires, for now.
-add_definitions("-D\"WISH_REQUIRES(...)=requires (__VA_ARGS__)\"")
-#wish_add_ide_definition("WISH_REQUIRES(...)" " ")
-add_definitions("-D\"IDE_IGNORE(...)=__VA_ARGS__\"")
-
-add_definitions(-DWISH_DATE_LONG="${WISH_DATE_LONG}")
-add_definitions(-DWISH_DATE_SHORT="${WISH_DATE_SHORT}")
-add_definitions(-DWISH_TIME_LONG="${WISH_TIME_LONG}")
-add_definitions(-DWISH_TIME_SHORT="${WISH_TIME_SHORT}")
-
 # Definitions --------------------------------------------------------------------------------------
 
+add_definitions("-D\"IDE_IGNORE(...)=__VA_ARGS__\"")
+
+# !!! HELL NO, BREAKS GLOBBING INCREMENTAL BUILD
+#add_definitions(-DWISH_DATE_LONG="${WISH_DATE_LONG}")
+#add_definitions(-DWISH_DATE_SHORT="${WISH_DATE_SHORT}")
+#add_definitions(-DWISH_TIME_LONG="${WISH_TIME_LONG}")
+#add_definitions(-DWISH_TIME_SHORT="${WISH_TIME_SHORT}")
 # Macro - Git
-add_definitions(-DWISH_GIT_BRANCH="${WISH_GIT_BRANCH}")
-add_definitions(-DWISH_GIT_COMMIT_HASH="${WISH_GIT_COMMIT_HASH}")
+#add_definitions(-DWISH_GIT_BRANCH="${WISH_GIT_BRANCH}")
+#add_definitions(-DWISH_GIT_COMMIT_HASH="${WISH_GIT_COMMIT_HASH}")
 # Macro - Libv
 string(LENGTH ${CMAKE_SOURCE_DIR}_ WISH_SHORT_PATH_CUTOFF)
 add_definitions(-DWISH_SHORT_PATH_CUTOFF=${WISH_SHORT_PATH_CUTOFF})
@@ -146,7 +135,7 @@ add_definitions(-DWISH_SHORT_PATH_PREFIX="${CMAKE_SOURCE_DIR}/")
 include_directories(app)
 include_directories(src)
 
-# === Package ======================================================================================
+# === Package =====================================================================================
 
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 set(THREADS_PREFER_PTHREAD_FLAG TRUE)
@@ -154,26 +143,25 @@ find_package(Threads REQUIRED)
 
 find_package(OpenGL REQUIRED)
 
-## === External =====================================================================================
-#
-#wish_create_group(GROUP_EXTERNAL_PROJECT) # External -----------------------------------------------
-#
+## === External ===================================================================================
+
+wish_group(group_external ext) # External ---------------------------------------------------------
+
 #wish_create_external(
 #	NAME vide
 #	GIT_REPOSITORY https://github.com/cpplibv/vide.git
 #	GIT_TAG 0a8204b7d4e2ae83540cb8418efd21157f8202ab
-##	GIT_REPOSITORY /e/dev/cpp/forks/vide
-##	GIT_TAG dev
 #	CMAKE_ARGS
 #		-DJUST_INSTALL_VIDE=ON
 #)
-#
-#wish_end_group()
-#
-## === Targets ======================================================================================
-#
-#wish_create_group(GROUP_GENERATOR) # Generators ---------------------------------------------------
-#
+
+# === Targets =====================================================================================
+
+#wish_group(group_application app) # Application ---------------------------------------------------
+#wish_group(group_example example) # Example -------------------------------------------------------
+
+wish_group(group_generator generator) # Generator -------------------------------------------------
+
 #wish_generator(
 #	TARGET  enum
 #	COMMAND enum
@@ -196,7 +184,7 @@ find_package(OpenGL REQUIRED)
 ##	OUTPUT  REGEX REPLACE "\\.hpp\\.in\\.lua$" ".cpp"
 ##)
 
-wish_create_group(GROUP_LIBRARY) # Libraries -------------------------------------------------------
+wish_group(group_library lib) # Library -----------------------------------------------------------
 
 wish_create_library(
 	TARGET libA STATIC
@@ -204,19 +192,28 @@ wish_create_library(
 	LINK   Threads::Threads
 )
 
-wish_end_group()
-wish_create_group(GROUP_SANDBOX) # Sandboxes -------------------------------------------------------
+wish_create_library(
+	TARGET libB STATIC
+	SOURCE src/libB/*.cpp
+	LINK   Threads::Threads
+)
+
+wish_group(group_sandbox sandbox) # Sandbox -------------------------------------------------------
 
 wish_create_executable(
-	TARGET sandbox
+	TARGET sandboxA
 	SOURCE src/main.cpp
-#	LINK   libvA libv_mt Threads::Threads
 	LINK   libA Threads::Threads
 )
-wish_end_group()
 
-## Tests --------------------------------------------------------------------------------------------
-#
+wish_create_executable(
+	TARGET sandboxB
+	SOURCE src/main.cpp
+	LINK   libA Threads::Threads
+)
+
+#wish_group(group_test test) # Test ----------------------------------------------------------------
+
 ## TODO P5: This should be an object library, but ran into troubles with target_link_libraries against object library,
 ##			maybe an addition layer of interface would solve the problem
 ##			check on cmake, there might have been an update that improves this front
@@ -224,9 +221,8 @@ wish_end_group()
 #	TARGET obj_test_runner STATIC
 #	SOURCE test/runner.cpp
 #	LINK   ext_catch ext_fmt ext_boost
+#	NO_GROUP
 #)
-#
-#wish_create_group(GROUP_UNIT_TEST)
 #
 #wish_create_executable(
 #	TARGET test_libv_algo
@@ -234,25 +230,8 @@ wish_end_group()
 #	LINK   obj_test_runner libv_algo ext_range
 #)
 #
-#wish_end_group()
 
-# groups -------------------------------------------------------------------------------------------
-
-add_custom_target(group_application DEPENDS ${GROUP_APPLICATION})
-add_custom_target(group_example     DEPENDS ${GROUP_EXAMPLE})
-add_custom_target(group_externals   DEPENDS ${GROUP_EXTERNAL_PROJECT})
-add_custom_target(group_generator   DEPENDS ${GROUP_GENERATOR})
-add_custom_target(group_library     DEPENDS ${GROUP_LIBRARY})
-add_custom_target(group_sandbox     DEPENDS ${GROUP_SANDBOX})
-add_custom_target(group_unit_test   DEPENDS ${GROUP_UNIT_TEST})
-
-add_custom_target(app       DEPENDS group_application)
-add_custom_target(example   DEPENDS group_example)
-add_custom_target(ext       DEPENDS group_externals)
-add_custom_target(generator DEPENDS group_generator)
-add_custom_target(lib       DEPENDS group_library)
-#add_custom_target(sandbox   DEPENDS group_sandbox)
-add_custom_target(test      DEPENDS group_unit_test)
+# -------------------------------------------------------------------------------------------------
 
 wish_create_ide_target()
 
