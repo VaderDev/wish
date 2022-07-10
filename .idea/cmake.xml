@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakeSharedSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" ENABLED="true" GENERATION_DIR="build/debug" CONFIG_NAME="Debug" GENERATION_OPTIONS="-DSKIP_EXTERNAL_CONFIGURES=TRUE -DFORCE_COLORED_OUTPUT=TRUE" BUILD_OPTIONS="-j 13" />
+      <configuration PROFILE_NAME="Release" ENABLED="true" GENERATION_DIR="build/release" CONFIG_NAME="Release" GENERATION_OPTIONS="-DSKIP_EXTERNAL_CONFIGURES=FALSE -DFORCE_COLORED_OUTPUT=TRUE" BUILD_OPTIONS="-j 13" />
+      <configuration PROFILE_NAME="Dev" ENABLED="true" GENERATION_DIR="build/dev" CONFIG_NAME="Dev" GENERATION_OPTIONS="-DSKIP_EXTERNAL_CONFIGURES=TRUE -DFORCE_COLORED_OUTPUT=TRUE" BUILD_OPTIONS="-j 13" />
+    </configurations>
+  </component>
+</project>
