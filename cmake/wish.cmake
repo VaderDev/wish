@@ -6,7 +6,7 @@ include(cmake/wish_create.cmake)
 include(cmake/wish_date.cmake)
 include(cmake/wish_git.cmake)
 include(cmake/wish_util.cmake)
-include(cmake/wish_warning.cmake)
+include(cmake/wish_compiler_flags.cmake)
 
 
 # -------------------------------------------------------------------------------------------------
@@ -30,7 +30,8 @@ endmacro()
 # -------------------------------------------------------------------------------------------------
 
 macro(wish_skip_external_configures value)
-    if(${SKIP_EXTERNAL_CONFIGURES})
+#    if(${SKIP_EXTERNAL_CONFIGURES})
+    if(value)
         wish_disable_configure_externals()
         message(STATUS "Skipping external project configurations")
     else()

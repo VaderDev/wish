@@ -17,7 +17,7 @@ endif()
 string(TOLOWER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE)
 #set(CMAKE_BUILD_TYPE WISH_BUILD_TYPE_LOWER)
 
-set(CMAKE_CONFIGURATION_TYPES "DEBUG;RELEASE;DEV" CACHE STRING "" FORCE)
+set(CMAKE_CONFIGURATION_TYPES "Debug;Release;Dev" CACHE STRING "" FORCE)
 
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 message(STATUS "Processor count: ${WISH_PROCESSOR_COUNT}")
@@ -30,7 +30,6 @@ message(STATUS "Git commit: ${WISH_GIT_COMMIT_HASH}")
 
 # TODO P3: wish: add support for skipping library build/links via directly amending the sources of a dependency (only for DEV build)
 # TODO P4: wish: inheritance for wish_create_executable and create_library
-# TODO P5: wish: modernize based on (GLOB will stay tho): https://www.youtube.com/watch?v=bsXLMQ6WgIk
 # TODO P5: wish: flag or build options to turn on/off sanitizes
 # TODO P5: wish: Recommended configure flags: -G"Ninja" -DCMAKE_BUILD_TYPE=DEV -DSKIP_EXTERNAL_CONFIGURES=TRUE -DFORCE_COLORED_OUTPUT=TRUE
 
@@ -44,7 +43,15 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE}
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib/${CMAKE_BUILD_TYPE})
 
-# Warning flags ------------------------------------------------------------------------------------
+# --- Options --------------------------------------------------------------------------------------
+
+option(FORCE_COLORED_OUTPUT "Always produce ANSI-colored output (GNU/Clang only)." FALSE)
+wish_force_colored_output(${FORCE_COLORED_OUTPUT})
+
+option(SKIP_EXTERNAL_CONFIGURES "Do not configure external projects only use the fake interface targets" FALSE)
+wish_skip_external_configures(${SKIP_EXTERNAL_CONFIGURES})
+
+# --- Flags ----------------------------------------------------------------------------------------
 
 wish_warning(
 	MSVC /Wall
@@ -104,25 +111,13 @@ wish_warning(
 	# GNU -Werror
 )
 
-if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-	add_compile_options(-fcoroutines)
-endif()
-
-# --- Options --------------------------------------------------------------------------------------
-
-option(FORCE_COLORED_OUTPUT "Always produce ANSI-colored output (GNU/Clang only)." FALSE)
-wish_force_colored_output(${FORCE_COLORED_OUTPUT})
-
-option(SKIP_EXTERNAL_CONFIGURES "Do not configure external projects only use the fake interface targets" FALSE)
-wish_skip_external_configures(${SKIP_EXTERNAL_CONFIGURES})
-
 wish_optimization_flags()
 
-# Flags --------------------------------------------------------------------------------------------
-
-add_compile_options(-m64)
-add_compile_options(-std=c++23)
-#set(CMAKE_CXX_STANDARD 23) # This stupid thing uses -std=gnu++23
+wish_compiler_flags(
+	GNU -fcoroutines
+	GNU -m64
+	GNU -std=c++23
+)
 
 # Tooling ------------------------------------------------------------------------------------------
 
