@@ -3,7 +3,7 @@
 cmake_minimum_required(VERSION 3.20)
 project(wish)
 
-#set(CMAKE_VERBOSE_MAKEFILE off)
+#set(CMAKE_VERBOSE_MAKEFILE on)
 #set(CMAKE_BUILD_TYPE DEBUG)
 #set(CMAKE_BUILD_TYPE RELEASE)
 
@@ -113,29 +113,12 @@ wish_compiler_flags(
 	GNU -std=c++23
 )
 
-# Definitions --------------------------------------------------------------------------------------
-
-add_definitions("-D\"IDE_IGNORE(...)=__VA_ARGS__\"")
-
-# !!! HELL NO, BREAKS GLOBBING INCREMENTAL BUILD
-#add_definitions(-DWISH_DATE_LONG="${WISH_DATE_LONG}")
-#add_definitions(-DWISH_DATE_SHORT="${WISH_DATE_SHORT}")
-#add_definitions(-DWISH_TIME_LONG="${WISH_TIME_LONG}")
-#add_definitions(-DWISH_TIME_SHORT="${WISH_TIME_SHORT}")
-# Macro - Git
-#add_definitions(-DWISH_GIT_BRANCH="${WISH_GIT_BRANCH}")
-#add_definitions(-DWISH_GIT_COMMIT_HASH="${WISH_GIT_COMMIT_HASH}")
-# Macro - Libv
-string(LENGTH ${CMAKE_SOURCE_DIR}_ WISH_SHORT_PATH_CUTOFF)
-add_definitions(-DWISH_SHORT_PATH_CUTOFF=${WISH_SHORT_PATH_CUTOFF})
-add_definitions(-DWISH_SHORT_PATH_PREFIX="${CMAKE_SOURCE_DIR}/")
-
 # Includes Directories -----------------------------------------------------------------------------
 
 include_directories(app)
 include_directories(src)
 
-# === Package =====================================================================================
+# === External ====================================================================================
 
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 set(THREADS_PREFER_PTHREAD_FLAG TRUE)
@@ -143,24 +126,32 @@ find_package(Threads REQUIRED)
 
 find_package(OpenGL REQUIRED)
 
-## === External ===================================================================================
+wish_group(group_external ext) # --- External -----------------------------------------------------
 
-wish_group(group_external ext) # External ---------------------------------------------------------
+wish_create_external(
+	NAME catch
+	GIT_REPOSITORY https://github.com/catchorg/Catch2
+	GIT_TAG v3.0.1
+	CMAKE_ARGS
+        -DCATCH_INSTALL_DOCS=OFF
+        -DCATCH_INSTALL_EXTRAS=OFF
+	LINK Catch2Main Catch2
+)
 
-#wish_create_external(
-#	NAME vide
-#	GIT_REPOSITORY https://github.com/cpplibv/vide.git
-#	GIT_TAG 0a8204b7d4e2ae83540cb8418efd21157f8202ab
-#	CMAKE_ARGS
-#		-DJUST_INSTALL_VIDE=ON
-#)
+wish_create_external(
+	NAME vide
+	GIT_REPOSITORY https://github.com/cpplibv/vide.git
+	GIT_TAG 0a8204b7d4e2ae83540cb8418efd21157f8202ab
+	CMAKE_ARGS
+        -DJUST_INSTALL_VIDE=ON
+)
 
 # === Targets =====================================================================================
 
-#wish_group(group_application app) # Application ---------------------------------------------------
-#wish_group(group_example example) # Example -------------------------------------------------------
+#wish_group(group_application app) # --- Application -----------------------------------------------
+#wish_group(group_example example) # --- Example ---------------------------------------------------
 
-wish_group(group_generator generator) # Generator -------------------------------------------------
+wish_group(group_generator generator) # --- Generator ---------------------------------------------
 
 #wish_generator(
 #	TARGET  enum
@@ -184,7 +175,7 @@ wish_group(group_generator generator) # Generator ------------------------------
 ##	OUTPUT  REGEX REPLACE "\\.hpp\\.in\\.lua$" ".cpp"
 ##)
 
-wish_group(group_library lib) # Library -----------------------------------------------------------
+wish_group(group_library lib) # --- Library -------------------------------------------------------
 
 wish_create_library(
 	TARGET libA STATIC
@@ -198,7 +189,7 @@ wish_create_library(
 	LINK   Threads::Threads
 )
 
-wish_group(group_sandbox sandbox) # Sandbox -------------------------------------------------------
+wish_group(group_sandbox sandbox) # --- Sandbox ---------------------------------------------------
 
 wish_create_executable(
 	TARGET sandboxA
@@ -212,24 +203,13 @@ wish_create_executable(
 	LINK   libA Threads::Threads
 )
 
-#wish_group(group_test test) # Test ----------------------------------------------------------------
+wish_group(group_test test) # --- Test ------------------------------------------------------------
 
-## TODO P5: This should be an object library, but ran into troubles with target_link_libraries against object library,
-##			maybe an addition layer of interface would solve the problem
-##			check on cmake, there might have been an update that improves this front
-#wish_create_library(
-#	TARGET obj_test_runner STATIC
-#	SOURCE test/runner.cpp
-#	LINK   ext_catch ext_fmt ext_boost
-#	NO_GROUP
-#)
-#
-#wish_create_executable(
-#	TARGET test_libv_algo
-#	SOURCE test/libv/algorithm/*.cpp
-#	LINK   obj_test_runner libv_algo ext_range
-#)
-#
+wish_create_executable(
+	TARGET test_libA
+	SOURCE test/libA/*.cpp
+	LINK   ext_catch libA
+)
 
 # -------------------------------------------------------------------------------------------------
 

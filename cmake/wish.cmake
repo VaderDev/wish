@@ -14,6 +14,8 @@ include(cmake/wish_version.cmake)
 
 message(STATUS "Wish version: ${wish_version}")
 
+# -------------------------------------------------------------------------------------------------
+
 macro(wish_force_colored_output value)
     if (${value})
         if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
@@ -33,8 +35,7 @@ endmacro()
 # -------------------------------------------------------------------------------------------------
 
 macro(wish_skip_external_configures value)
-#    if(${SKIP_EXTERNAL_CONFIGURES})
-    if(value)
+    if(${value})
         wish_disable_configure_externals()
         message(STATUS "Skipping external project configurations")
     else()
@@ -66,5 +67,18 @@ macro(wish_optimization_flags)
         message(WARNING "Failed to identify [${CMAKE_BUILD_TYPE}] as a build type")
     endif()
 endmacro()
+
+# Definitions --------------------------------------------------------------------------------------
+
+# ${WISH_DATE_LONG}
+# ${WISH_DATE_SHORT}
+# ${WISH_TIME_LONG}
+# ${WISH_TIME_SHORT}
+# ${WISH_GIT_BRANCH}
+# ${WISH_GIT_COMMIT_HASH}
+
+string(LENGTH ${CMAKE_SOURCE_DIR}_ WISH_SHORT_PATH_CUTOFF)
+add_definitions(-DWISH_SHORT_PATH_CUTOFF=${WISH_SHORT_PATH_CUTOFF})
+add_definitions(-DWISH_SHORT_PATH_PREFIX="${CMAKE_SOURCE_DIR}/")
 
 # -------------------------------------------------------------------------------------------------

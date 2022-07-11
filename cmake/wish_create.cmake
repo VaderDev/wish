@@ -6,7 +6,7 @@ include(cmake/wish_version.cmake)
 
 # --- Options --------------------------------------------------------------------------------------
 
-set(__wish_configure_externals 0)
+set(__wish_configure_externals 1)
 macro(wish_enable_configure_externals)
 	set(__wish_configure_externals 1)
 endmacro()
@@ -145,7 +145,7 @@ function(wish_create_external)
 	set(__wish_external_defines ${temp_list} PARENT_SCOPE)
 
 	# group
-	if (NOT ${arg_NO_GROUP})
+	if (NOT ${arg_NO_GROUP} AND ${__wish_configure_externals})
 		__wish_add_member_to_group(get_${arg_NAME})
 	endif()
 
