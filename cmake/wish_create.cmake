@@ -231,6 +231,10 @@ function(__wish_generate out_generated_outputs)
 				else()
 					list(APPEND output_files_rel ${output_file})
 					list(APPEND output_files_abs ${CMAKE_CURRENT_SOURCE_DIR}/${output_file})
+					if (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${output_file}")
+						file(TOUCH "${CMAKE_CURRENT_SOURCE_DIR}/${output_file}")
+						file(TOUCH "${matching_file}") # Touch the input file to force generation of the output
+					endif()
 				endif()
 
 				# Jump to next segment
@@ -271,16 +275,16 @@ function(wish_create_executable)
 		message(FATAL_ERROR "At least one SOURCE or OBJECT should be given.")
 	endif()
 
+	# generated files
+	if(arg_GENERATE)
+		__wish_generate(generated_outputs ${arg_GENERATE})
+	endif()
+
 	# glob
 	file(GLOB_RECURSE matching_sources LIST_DIRECTORIES false RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS ${arg_SOURCE})
 	foreach(obj ${arg_OBJECT})
 		list(APPEND matching_sources $<TARGET_OBJECTS:${obj}>)
 	endforeach()
-
-	# generated files
-	if(arg_GENERATE)
-		__wish_generate(generated_outputs ${arg_GENERATE})
-	endif()
 
 	# add
 	set(every_source ${matching_sources} ${generated_outputs})
@@ -318,6 +322,11 @@ function(wish_create_library)
 #		# TODO P5: Target might be INTERFACE
 #	endif()
 
+	# generated files
+	if(arg_GENERATE)
+		__wish_generate(generated_outputs ${arg_GENERATE})
+	endif()
+
 	# glob
 	if(arg_SOURCE)
 		file(GLOB_RECURSE matching_sources LIST_DIRECTORIES false RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS ${arg_SOURCE})
@@ -325,11 +334,6 @@ function(wish_create_library)
 	foreach(obj ${arg_OBJECT})
 		list(APPEND matching_sources $<TARGET_OBJECTS:${obj}>)
 	endforeach()
-
-	# generated files
-	if(arg_GENERATE)
-		__wish_generate(generated_outputs ${arg_GENERATE})
-	endif()
 
 	# add_library
 	set(every_source ${matching_sources} ${target_objects} ${generated_outputs})
@@ -383,16 +387,16 @@ function(wish_create_object)
 		message(FATAL_ERROR "At least one SOURCE or OBJECT should be given.")
 	endif()
 
+	# generated files
+	if(arg_GENERATE)
+		__wish_generate(generated_outputs ${arg_GENERATE})
+	endif()
+
 	# glob
 	file(GLOB_RECURSE matching_sources LIST_DIRECTORIES false RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS ${arg_SOURCE})
 	foreach(obj ${arg_OBJECT})
 		list(APPEND matching_sources $<TARGET_OBJECTS:${obj}>)
 	endforeach()
-
-	# generated files
-	if(arg_GENERATE)
-		__wish_generate(generated_outputs ${arg_GENERATE})
-	endif()
 
 	# add
 	set(every_source ${matching_sources} ${generated_outputs})
