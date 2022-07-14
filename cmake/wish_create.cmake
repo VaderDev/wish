@@ -188,7 +188,7 @@ function(wish_generator)
 	set(__wish_generator_output_rules_${arg_TARGET} ${output_rules} PARENT_SCOPE)
 endfunction()
 
-function(wish_generate out_generated_outputs)
+function(__wish_generate out_generated_outputs)
 	cmake_parse_arguments(arg "" "" "${__wish_generators}" ${ARGN})
 
 #	# debug
@@ -222,14 +222,22 @@ function(wish_generate out_generated_outputs)
 				list(SUBLIST output_rules_left 0 ${end_index} output_rule)
 				# Use ${output_rule} list
 				string(${output_rule} output_file ${matching_file})
-				list(APPEND output_files_rel ${output_file})
-				list(APPEND output_files_abs ${CMAKE_CURRENT_SOURCE_DIR}/${output_file})
+
+				if (${output_file} STREQUAL ${matching_file})
+					# if the output_file rule would match the matching_file the rule does not fit (and it would lead to circle dep anyways)
+#					if(arg_DEBUG OR __wish_global_debug)
+#						message("skipping ${matching_file} for generation, rule did not fit")
+#					endif()
+				else()
+					list(APPEND output_files_rel ${output_file})
+					list(APPEND output_files_abs ${CMAKE_CURRENT_SOURCE_DIR}/${output_file})
+				endif()
 
 				# Jump to next segment
 				if (${end_index} EQUAL -1)
 					set(output_rules_left "")
 				else()
-					MATH(EXPR end_index_p_1 "${end_index}+1")
+					math(EXPR end_index_p_1 "${end_index}+1")
 					list(SUBLIST output_rules_left ${end_index_p_1} -1 output_rules_left)
 				endif()
 			endwhile()
@@ -271,7 +279,7 @@ function(wish_create_executable)
 
 	# generated files
 	if(arg_GENERATE)
-		wish_generate(generated_outputs ${arg_GENERATE})
+		__wish_generate(generated_outputs ${arg_GENERATE})
 	endif()
 
 	# add
@@ -320,7 +328,7 @@ function(wish_create_library)
 
 	# generated files
 	if(arg_GENERATE)
-		wish_generate(generated_outputs ${arg_GENERATE})
+		__wish_generate(generated_outputs ${arg_GENERATE})
 	endif()
 
 	# add_library
@@ -383,7 +391,7 @@ function(wish_create_object)
 
 	# generated files
 	if(arg_GENERATE)
-		wish_generate(generated_outputs ${arg_GENERATE})
+		__wish_generate(generated_outputs ${arg_GENERATE})
 	endif()
 
 	# add
