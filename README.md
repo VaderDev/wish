@@ -1,38 +1,160 @@
 
 
+## Wish - A CMake library for simplicity
+
+NOTICE: Wish was just created, documentation, features and more info will be coming soon 
+
+TODO: Documentation
+
+-----
+
+### API Reference
+
+TODO: Reference documentation
+
+include(cmake/wish.cmake)
+```
+include(cmake/wish.cmake)
+```
+
+wish_configurations
+```
+wish_configurations(DEFAULT <default mode> <other modes>...)
+
+# Example
+wish_configurations(DEFAULT Release Dev Debug)
+```
+
+wish_force_colored_output
+```
+wish_force_colored_output(<bool>)
+
+# Example
+option(FORCE_COLORED_OUTPUT "Always produce ANSI-colored output (GNU/Clang only)." FALSE)
+wish_force_colored_output(${FORCE_COLORED_OUTPUT})
+```
+
+wish_skip_external_configures
+```
+wish_skip_external_configures(<bool>)
+
+# Example
+option(SKIP_EXTERNAL_CONFIGURES "Do not configure external projects only use the fake interface targets" FALSE)
+wish_skip_external_configures(${SKIP_EXTERNAL_CONFIGURES})
+```
+
+wish_warning
+```
+TODO
+
+# Example
+wish_warning(
+	MSVC /Wall
+	Clang -Weverything
+	GNU -Wall
+	GNU VERSION_GREATER 12.0 -Wno-array-bounds
+)
+```
+
+wish_compiler_flags
+```
+TODO
+
+# Example
+wish_compiler_flags(
+	GNU -fcoroutines
+	GNU -m64
+	GNU -std=c++23
+)
+```
+
+wish_optimization_flags
+```
+wish_optimization_flags()
+```
+
+wish_group
+```
+wish_group(<group_name> <aliases...>)
+
+# Example
+wish_group(group_library lib)
+```
+
+wish_create_external
+```
+TODO
+
+# Example
+wish_create_external(
+	NAME catch
+	GIT_REPOSITORY https://github.com/catchorg/Catch2
+	GIT_TAG v3.0.1
+	CMAKE_ARGS
+        -DCATCH_INSTALL_DOCS=OFF
+        -DCATCH_INSTALL_EXTRAS=OFF
+	LINK Catch2Main Catch2
+)
+```
+
+wish_generator
+```
+TODO
+
+# Example
+wish_generator(
+	TARGET  codegen
+	COMMAND codegen
+#	OUTPUT  REPLACE ".in.lua" ".hpp"
+	OUTPUT  REPLACE ".ins.lua" ".hpp"
+	OUTPUT  REPLACE ".ins.lua" ".cpp"
+)
+```
+
+wish_create_executable
+```
+wish_create_executable(
+	TARGET <target name>
+	SOURCE <source glob pattern>...
+	OBJECT <object targets>...
+	GENERATE <generator name> <input glob pattern>...
+	LINK <link targets or libraries>...
+	[NO_GROUP]
+	[DEBUG]
+)
+
+# Example
+wish_create_executable(
+	TARGET codegen
+	SOURCE app/codegen/codegen_main.cpp
+	LINK   ext_fmt ext_sol
+)
+```
 
 
+wish_create_library
+```
+wish_create_library(
+	TARGET <target name> (STATIC | SHARED | INTERFACE)
+	SOURCE <source glob pattern>...
+	OBJECT <object targets>...
+	GENERATE <generator name> <input glob pattern>...
+	LINK <link targets or libraries>...
+	[NO_GROUP]
+	[DEBUG]
+)
 
-support ns::lib
-	most likely wish_group(NAMESPACE ns)
+# Example
+wish_create_library(
+	TARGET libA STATIC
+	SOURCE src/libA/*.cpp
+#	GENERATE codegen src/libA/*.in.lua
+	GENERATE codegen src/libA/*.ins.lua
+	LINK   Threads::Threads
+)
+```
 
-
-
-- TODO P3: Implement a single file or line bootstrap (FetchContent)
-- TODO P4: Last chance for conan (wish is created even if conan can be used)
-- TODO P4: Use a shared ext folder (set via an option, default to project/ext) (external folders must be unique based on every used external argument)
-
-
-
-
-
-
-
-include ext targets via cmake when they have support for it 
-
-
-
-do something about the # !!! HELL NO, BREAKS GLOBBING INCREMENTAL BUILD
-
-
-solve the rebuild on new source generation when a new CPP file is created
-
-
-
-
---- Articles ------------------------------------------------------------------------------------
-
-C++Now 2017: Daniel Pfeifer “Effective CMake": https://www.youtube.com/watch?v=bsXLMQ6WgIk
-
-
-
+wish_create_ide_target
+```
+wish_create_ide_target()
+```

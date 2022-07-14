@@ -20,13 +20,6 @@ message(STATUS "CXX compiler version: ${CMAKE_CXX_COMPILER_VERSION}")
 #message(STATUS "Git branch: ${WISH_GIT_BRANCH}")
 #message(STATUS "Git commit: ${WISH_GIT_COMMIT_HASH}")
 
-# TODO ---------------------------------------------------------------------------------------------
-
-# TODO P3: wish: add support for skipping library build/links via directly amending the sources of a dependency (only for DEV build)
-# TODO P4: wish: inheritance for wish_create_executable and create_library
-# TODO P5: wish: flag or build options to turn on/off sanitizes
-# TODO P5: wish: Recommended configure flags: -G"Ninja" -DCMAKE_BUILD_TYPE=DEV -DSKIP_EXTERNAL_CONFIGURES=TRUE -DFORCE_COLORED_OUTPUT=TRUE
-
 # Paths --------------------------------------------------------------------------------------------
 
 set(PATH_EXT_IDE ext)
@@ -105,13 +98,13 @@ wish_warning(
 	# GNU -Werror
 )
 
-wish_optimization_flags()
-
 wish_compiler_flags(
 	GNU -fcoroutines
 	GNU -m64
 	GNU -std=c++23
 )
+
+wish_optimization_flags()
 
 # Includes Directories -----------------------------------------------------------------------------
 
@@ -139,47 +132,77 @@ wish_create_external(
 )
 
 wish_create_external(
-	NAME vide
-	GIT_REPOSITORY https://github.com/cpplibv/vide.git
-	GIT_TAG 0a8204b7d4e2ae83540cb8418efd21157f8202ab
+	NAME fmt
+	GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+	GIT_TAG 8.1.1
 	CMAKE_ARGS
-        -DJUST_INSTALL_VIDE=ON
+		-DFMT_DOC=OFF
+		-DFMT_TEST=OFF
+		-DBUILD_SHARED_LIBS=OFF
+	LINK fmt
 )
+
+wish_create_external(
+	NAME lua
+	GIT_REPOSITORY https://github.com/walterschell/Lua.git
+	GIT_TAG 14f98e5fdcde3ccd7ea9188181dd7e50660a2999 # v5.4.4
+	CMAKE_ARGS
+		-DLUA_ENABLE_SHARED=OFF
+		-DLUA_BUILD_BINARY=OFF
+		-DLUA_BUILD_COMPILER=OFF
+		-DLUA_SUPPORT_DL=OFF
+	LINK lua_static
+)
+
+wish_create_external(
+	NAME sol2
+	GIT_REPOSITORY https://github.com/ThePhD/sol2.git
+	GIT_TAG v3.3.0
+	CMAKE_ARGS
+#		-DSOL2_BUILD_LUA=ON
+#		-DSOL2_LUA_VERSION="5.4.4"
+		-DSOL2_DOCS=OFF
+	LINK ext_lua
+)
+
+#wish_create_external(
+#	NAME vide
+#	GIT_REPOSITORY https://github.com/cpplibv/vide.git
+#	GIT_TAG 0a8204b7d4e2ae83540cb8418efd21157f8202ab
+#	CMAKE_ARGS
+#        -DJUST_INSTALL_VIDE=ON
+#)
 
 # === Targets =====================================================================================
 
-#wish_group(group_application app) # --- Application -----------------------------------------------
+wish_group(group_application app) # --- Application -----------------------------------------------
+
+wish_create_executable(
+	TARGET codegen
+	SOURCE app/codegen/codegen_main.cpp
+	LINK   ext_fmt ext_sol2
+#	LINK   ext_fmt ext_range libv_lua libv_utility libv_algo
+)
+
 #wish_group(group_example example) # --- Example ---------------------------------------------------
 
 wish_group(group_generator generator) # --- Generator ---------------------------------------------
 
-#wish_generator(
-#	TARGET  enum
-#	COMMAND enum
-#	OUTPUT  REPLACE ".hpp.in.lua" ".hpp"
-#)
-#
-#wish_generator(
-#	TARGET  codegen
-#	COMMAND codegen
-#	OUTPUT  REPLACE ".in.lua" ".hpp"
-#	OUTPUT  REPLACE ".in.lua" ".cpp"
-#)
-#
-##wish_generator(
-##	TARGET  enum_split
-##	COMMAND enum --split
-##	OUTPUT  REPLACE .hpp.in.lua .hpp
-##	OUTPUT  REPLACE .hpp.in.lua .cpp
-##	OUTPUT  REGEX REPLACE "\\.hpp\\.in\\.lua$" ".hpp"
-##	OUTPUT  REGEX REPLACE "\\.hpp\\.in\\.lua$" ".cpp"
-##)
+wish_generator(
+	TARGET  codegen
+	COMMAND codegen
+#	OUTPUT REPLACE ".in.lua" ".hpp"
+	OUTPUT REPLACE ".inh.lua" ".hpp"
+	OUTPUT REPLACE ".ins.lua" ".hpp"
+	OUTPUT REPLACE ".ins.lua" ".cpp"
+)
 
 wish_group(group_library lib) # --- Library -------------------------------------------------------
 
 wish_create_library(
 	TARGET libA STATIC
 	SOURCE src/libA/*.cpp
+	GENERATE codegen src/libA/*.in?.lua
 	LINK   Threads::Threads
 )
 
