@@ -8,6 +8,15 @@ TODO: Documentation
 
 -----
 
+#### Release notes
+
+TODO: Format, place
+
+- Version 4.1 - Fix double globbing during newly created generated files
+- Version 4.0 - Initial release in this format (history)
+
+-----
+
 ### API Reference
 
 TODO: Reference documentation
@@ -15,6 +24,7 @@ TODO: Reference documentation
 include(cmake/wish.cmake)
 ```
 include(cmake/wish.cmake)
+wish_version
 ```
 
 wish_configurations
