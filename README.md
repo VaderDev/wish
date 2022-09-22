@@ -78,6 +78,16 @@ wish_compiler_flags(
 )
 ```
 
+wish_linker_flags
+```
+TODO
+
+# Example
+wish_linker_flags(
+    Release GNU -mwindows
+)
+```
+
 wish_optimization_flags
 ```
 wish_optimization_flags()

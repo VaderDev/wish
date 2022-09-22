@@ -104,6 +104,10 @@ wish_compiler_flags(
 	GNU -std=c++23
 )
 
+wish_linker_flags(
+	Release GNU -mwindows
+)
+
 wish_optimization_flags()
 
 # Includes Directories -----------------------------------------------------------------------------
