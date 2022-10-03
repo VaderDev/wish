@@ -7,7 +7,7 @@ project(wish)
 #set(CMAKE_BUILD_TYPE DEBUG)
 #set(CMAKE_BUILD_TYPE RELEASE)
 
-include(cmake/wish.cmake)
+include(cmake/wish/wish_core.cmake)
 
 # --------------------------------------------------------------------------------------------------
 
@@ -68,14 +68,14 @@ wish_warning(
 	GNU -Wundef
 
 	#	more warning:
-	#GNU -Wmissing-include-dirs
-	#GNU -Wdisabled-optimization,
-	#GNU -Wpadded,
-	#GNU -Wzero-as-null-pointer-constant,
+	# GNU -Wmissing-include-dirs
+	# GNU -Wdisabled-optimization,
+	# GNU -Wpadded,
+	# GNU -Wzero-as-null-pointer-constant,
 	#	maybe even:
-	#GNU -Wswitch-enum, and take a look at:
-	#GNU -Wunsafe-loop-optimizations,
-	#GNU -Wdangling-else
+	# GNU -Wswitch-enum, and take a look at:
+	# GNU -Wunsafe-loop-optimizations,
+	# GNU -Wdangling-else
 
 	# Enablement in progress:
 	# GNU -Wuseless-cast # in vec_base_t has some false positive issue with this one, but otherwise clear

@@ -20,8 +20,9 @@ jobs:
         uses: thedoctor0/zip-release@main
         with:
           type: 'zip'
-          path: 'cmake'
-          filename: 'wish_lite.zip'
+          directory: 'cmake/'
+          path: 'wish/'
+          filename: '../wish_lite.zip'
 
       - name: Create Release
         id: create_release
@@ -35,12 +36,12 @@ jobs:
           prerelease: false
 
       - name: Upload Archive
-        id: upload_release
+        id: upload_archive
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: './wish_lite.zip'
+          asset_path: 'wish_lite.zip'
           asset_name: 'wish_lite.zip'
           asset_content_type: application/zip

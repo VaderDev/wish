@@ -2,7 +2,7 @@
 
 include_guard(GLOBAL)
 
-include(cmake/wish_version.cmake)
+include(cmake/wish/wish_version.cmake)
 
 # --- Options --------------------------------------------------------------------------------------
 

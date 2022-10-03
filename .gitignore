@@ -20,6 +20,6 @@
 !/.editorconfig
 !/.gitignore
 !/CMakeLists.txt
-!/README.md
 !/LICENSE
-
+!/Notes.txt
+!/README.md

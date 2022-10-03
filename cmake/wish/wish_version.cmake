@@ -2,4 +2,4 @@
 
 include_guard(GLOBAL)
 
-set(wish_version 4.2.0)
+set(wish_version 5.0.0)

@@ -8,12 +8,32 @@ TODO: Documentation
 
 -----
 
+#### Setup
+
+Grab the latest wish hook script
+TODO: More documentation
+```
+mkdir -p cmake && wget https://raw.githubusercontent.com/VaderY/wish/master/cmake/wish.cmake -O cmake/wish.cmake
+```
+
+Inside your root CMakeLists.txt file just set the version and include the primary script:
+TODO: More documentation
+```
+set(WISH_REQUEST_VERSION v5.0.0)
+include(cmake/wish.cmake)
+```
+
+-----
+
 #### Release notes
 
 TODO: Format, place
 
-- Version 4.1 - Fix double globbing during newly created generated files
-- Version 4.0 - Initial release in this format (history)
+- v5.0 - Automated wish install and update
+
+- v4.2 - Add wish_linker_flags
+- v4.1 - Fix double globbing during newly created generated files
+- v4.0 - Initial release in this format (history)
 
 -----
 
