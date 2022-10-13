@@ -114,6 +114,10 @@ function(wish_create_external)
 			#GIT_SHALLOW 1 # shallow fetch is not possible as long as SHA tags are used
 			DOWNLOAD_EXTRACT_TIMESTAMP 1
 			EXCLUDE_FROM_ALL 1
+
+            # USES_TERMINAL will serialize the download steps so the parallel connections are not dropped by overwhelmed/angered servers
+            USES_TERMINAL_DOWNLOAD 1
+
 			${command_str_configure}
 			${command_str_build}
 			${arg_UNPARSED_ARGUMENTS}
