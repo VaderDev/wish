@@ -46,7 +46,9 @@ macro(wish_group name)
 endmacro()
 
 macro(__wish_add_member_to_group target)
-	add_dependencies(${__wish_current_group} ${target})
+	if(__wish_current_group)
+		add_dependencies(${__wish_current_group} ${target})
+	endif()
 endmacro()
 
 # --- IDE / Build info -----------------------------------------------------------------------------
