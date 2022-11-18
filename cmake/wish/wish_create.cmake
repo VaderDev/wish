@@ -321,7 +321,7 @@ endfunction()
 # --- Library --------------------------------------------------------------------------------------
 
 function(wish_create_library)
-	cmake_parse_arguments(arg "DEBUG;NO_GROUP;STATIC;SHARED;INTERFACE" "TARGET" "SOURCE;OBJECT;GENERATE;LINK" ${ARGN})
+	cmake_parse_arguments(arg "DEBUG;NO_GROUP;STATIC;SHARED;INTERFACE" "TARGET" "ALIAS;SOURCE;OBJECT;GENERATE;LINK" ${ARGN})
 
 	# check
 #	if(NOT arg_SOURCE AND NOT arg_OBJECT)
@@ -362,6 +362,10 @@ function(wish_create_library)
 #	add_library(${arg_TARGET} $<IF:$<BOOL:${arg_STATIC}>,"STATIC",""> $<IF:$<BOOL:${arg_INTERFACE}>,"INTERFACE",""> ${matching_sources} ${target_objects})
 #	target_link_libraries(${arg_TARGET} $<IF:$<BOOL:${arg_INTERFACE}>,"INTERFACE",""> ${arg_LINK})
 
+	foreach(alias ${arg_ALIAS})
+		add_library(${alias} ALIAS ${arg_TARGET})
+	endforeach()
+
 	# group
 	if (NOT ${arg_NO_GROUP})
 		__wish_add_member_to_group(${arg_TARGET})
@@ -375,6 +379,7 @@ function(wish_create_library)
 		message("	Object    : ${arg_OBJECT}")
 		message("	Generate  : ${arg_GENERATE}")
 		message("	Generated : ${generated_outputs}")
+		message("	Alias     : ${arg_ALIAS}")
 		message("	Link      : ${arg_LINK}")
 		message("	Static    : ${arg_STATIC}")
 		message("	Shared    : ${arg_SHARED}")

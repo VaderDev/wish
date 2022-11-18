@@ -20,6 +20,7 @@
 !/.editorconfig
 !/.gitignore
 !/CMakeLists.txt
+!/CMakePresets.json
 !/LICENSE
 !/Notes.txt
 !/README.md

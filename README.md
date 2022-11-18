@@ -2,7 +2,7 @@
 
 ## Wish - A CMake library for simplicity
 
-NOTICE: Wish was just created, documentation, features and more info will be coming soon 
+NOTICE: Wish was just created, documentation, features and more info will be coming "soon"
 
 TODO: Documentation
 
@@ -19,7 +19,7 @@ mkdir -p cmake && wget https://raw.githubusercontent.com/VaderY/wish/master/cmak
 Inside your root CMakeLists.txt file just set the version and include the primary script:
 TODO: More documentation
 ```
-set(WISH_REQUEST_VERSION v5.0.0)
+set(WISH_REQUEST_VERSION v5.0.3)
 include(cmake/wish.cmake)
 ```
 
@@ -29,8 +29,15 @@ include(cmake/wish.cmake)
 
 TODO: Format, place
 
-- v5.0 - Automated wish install and update
-
+- v5.0.3
+  - Make wish_group usage optional
+  - Add support for library aliases
+- v5.0.2
+  - Enable USES_TERMINAL_DOWNLOAD for externals
+- v5.0.1
+  - Test release
+- v5.0.0
+  - Automated wish install and update
 - v4.2 - Add wish_linker_flags
 - v4.1 - Fix double globbing during newly created generated files
 - v4.0 - Initial release in this format (history)
@@ -176,6 +183,7 @@ wish_create_library
 ```
 wish_create_library(
 	TARGET <target name> (STATIC | SHARED | INTERFACE)
+	ALIAS <alias::name>...
 	SOURCE <source glob pattern>...
 	OBJECT <object targets>...
 	GENERATE <generator name> <input glob pattern>...
@@ -187,6 +195,7 @@ wish_create_library(
 # Example
 wish_create_library(
 	TARGET libA STATIC
+	ALIAS lib::A
 	SOURCE src/libA/*.cpp
 #	GENERATE codegen src/libA/*.in.lua
 	GENERATE codegen src/libA/*.ins.lua
