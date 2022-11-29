@@ -72,17 +72,17 @@ function(wish_create_ide_target)
 		COMMAND ${CMAKE_COMMAND} -E echo "Wish version: ${wish_version}"
 	)
 
-    file(WRITE "${CMAKE_BINARY_DIR}/__wish_external_raw_arguments.new.txt" "${__wish_external_raw_arguments}")
-    add_custom_target(wish_ext_lazy
+	file(WRITE "${CMAKE_BINARY_DIR}/__wish_external_raw_arguments.new.txt" "${__wish_external_raw_arguments}")
+	add_custom_target(wish_ext_lazy
 		# TODO P1: Different folder for different build types on ext is bypassed (ext currently built by build/release)
 		# TODO P3: Its working, but would be nice, if not a re-entering call would execute it
 		#			Creating a custom target for every external would improve this
 		#			This would also mean that only the touched external are tried to be rebuilt
 		#			Careful with multiple custom targets as USES_TERMINAL could force being serial
 		USES_TERMINAL
-        COMMAND ${CMAKE_COMMAND} -E compare_files "${CMAKE_BINARY_DIR}/__wish_external_raw_arguments.new.txt" "${CMAKE_BINARY_DIR}/__wish_external_raw_arguments.old.txt" || ${CMAKE_COMMAND} --build . --target ext -- -j 3
-        COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_BINARY_DIR}/__wish_external_raw_arguments.new.txt" "${CMAKE_BINARY_DIR}/__wish_external_raw_arguments.old.txt"
-    )
+		COMMAND ${CMAKE_COMMAND} -E compare_files "${CMAKE_BINARY_DIR}/__wish_external_raw_arguments.new.txt" "${CMAKE_BINARY_DIR}/__wish_external_raw_arguments.old.txt" || ${CMAKE_COMMAND} --build . --target ext -- -j 3
+		COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_BINARY_DIR}/__wish_external_raw_arguments.new.txt" "${CMAKE_BINARY_DIR}/__wish_external_raw_arguments.old.txt"
+	)
 endfunction()
 
 # --- External -------------------------------------------------------------------------------------
@@ -117,8 +117,8 @@ function(wish_create_external)
 			DOWNLOAD_EXTRACT_TIMESTAMP 1
 			EXCLUDE_FROM_ALL 1
 
-            # USES_TERMINAL will serialize the download steps so the parallel connections are not dropped by overwhelmed/angered servers
-            USES_TERMINAL_DOWNLOAD 1
+			# USES_TERMINAL will serialize the download steps so the parallel connections are not dropped by overwhelmed/angered servers
+			USES_TERMINAL_DOWNLOAD 1
 
 			${command_str_configure}
 			${command_str_build}
@@ -159,18 +159,18 @@ function(wish_create_external)
 	# debug
 	if(arg_DEBUG OR __wish_global_debug)
 		message("External target: ext_${arg_NAME}, get_${arg_NAME}")
-		message("	Name      : ${arg_NAME}")
-		message("	Define    : ${arg_DEFINE}")
-		message("	ExtDir    : ${PATH_EXT}/${arg_NAME}")
+		message("	Name	  : ${arg_NAME}")
+		message("	Define	: ${arg_DEFINE}")
+		message("	ExtDir	: ${PATH_EXT}/${arg_NAME}")
 		message("	ExtSource : ${PATH_EXT_SRC}/${arg_NAME}")
 		message("	IncludeDir: ${arg_INCLUDE_DIR}")
-		message("	Link      : ${arg_LINK}")
+		message("	Link	  : ${arg_LINK}")
 		message("	SkipCfg   : ${arg_SKIP_CONFIGURE}")
 		message("	SkipBld   : ${arg_SKIP_BUILD}")
 		message("	SkipCfgBld: ${arg_SKIP_CONFIGURE_AND_BUILD}")
 		message("	Unparsed  : ${arg_UNPARSED_ARGUMENTS}")
 		message("	NoGroup   : ${arg_NO_GROUP}")
-		message("	Group     : ${__wish_current_group}")
+		message("	Group	 : ${__wish_current_group}")
 	endif()
 endfunction()
 
@@ -201,17 +201,17 @@ function(__wish_generate out_generated_outputs)
 #	# debug
 #	if(arg_DEBUG OR __wish_global_debug)
 #		message("wish_generate")
-#		message("	__wish_generators      : ${__wish_generators}")
-#		message("arg_enum     : ${arg_enum}")
-#		message("arg_codegen     : ${arg_codegen}")
-#		message("	ARGN                   : ${ARGN}")
+#		message("	__wish_generators	  : ${__wish_generators}")
+#		message("arg_enum	 : ${arg_enum}")
+#		message("arg_codegen	 : ${arg_codegen}")
+#		message("	ARGN				   : ${ARGN}")
 #	endif()
 
 	set(generated_outputs "")
 
 	foreach(generator ${__wish_generators})
-#		message("foreach generator     : ${generator}")
-#		message("foreach ${arg_${generator}}     : ${arg_${generator}}")
+#		message("foreach generator	 : ${generator}")
+#		message("foreach ${arg_${generator}}	 : ${arg_${generator}}")
 ##		if (NOT ${arg_${generator}})
 		if (NOT arg_${generator})
 			continue()
@@ -268,7 +268,7 @@ function(__wish_generate out_generated_outputs)
 
 #	if(arg_DEBUG OR __wish_global_debug)
 #		message("out_generated_outputs : ${out_generated_outputs}")
-#		message("generated_outputs     : ${generated_outputs}")
+#		message("generated_outputs	 : ${generated_outputs}")
 #	endif()
 endfunction()
 
@@ -309,12 +309,12 @@ function(wish_create_executable)
 	# debug
 	if(arg_DEBUG OR __wish_global_debug)
 		message("Executable target: ${arg_TARGET}")
-		message("	Glob      : ${arg_SOURCE}")
-		message("	Source    : ${matching_sources}")
-		message("	Object    : ${arg_OBJECT}")
-		message("	Link      : ${arg_LINK}")
+		message("	Glob	  : ${arg_SOURCE}")
+		message("	Source	: ${matching_sources}")
+		message("	Object	: ${arg_OBJECT}")
+		message("	Link	  : ${arg_LINK}")
 		message("	NoGroup   : ${arg_NO_GROUP}")
-		message("	Group     : ${__wish_current_group}")
+		message("	Group	 : ${__wish_current_group}")
 	endif()
 endfunction()
 
@@ -380,18 +380,18 @@ function(wish_create_library)
 	# debug
 	if(arg_DEBUG OR __wish_global_debug)
 		message("Library target: ${arg_TARGET}")
-		message("	Glob      : ${arg_SOURCE}")
-		message("	Source    : ${matching_sources}")
-		message("	Object    : ${arg_OBJECT}")
+		message("	Glob	  : ${arg_SOURCE}")
+		message("	Source	: ${matching_sources}")
+		message("	Object	: ${arg_OBJECT}")
 		message("	Generate  : ${arg_GENERATE}")
 		message("	Generated : ${generated_outputs}")
-		message("	Alias     : ${arg_ALIAS}")
-		message("	Link      : ${arg_LINK}")
-		message("	Static    : ${arg_STATIC}")
-		message("	Shared    : ${arg_SHARED}")
+		message("	Alias	 : ${arg_ALIAS}")
+		message("	Link	  : ${arg_LINK}")
+		message("	Static	: ${arg_STATIC}")
+		message("	Shared	: ${arg_SHARED}")
 		message("	Interface : ${arg_INTERFACE}")
 		message("	NoGroup   : ${arg_NO_GROUP}")
-		message("	Group     : ${__wish_current_group}")
+		message("	Group	 : ${__wish_current_group}")
 	endif()
 endfunction()
 
@@ -430,14 +430,14 @@ function(wish_create_object)
 	# debug
 	if(arg_DEBUG OR __wish_global_debug)
 		message("Object target: ${arg_TARGET}")
-		message("	Glob      : ${arg_SOURCE}")
-		message("	Source    : ${matching_sources}")
+		message("	Glob	  : ${arg_SOURCE}")
+		message("	Source	: ${matching_sources}")
 		message("	Generate  : ${arg_GENERATE}")
 		message("	Generated : ${generated_outputs}")
-		message("	Link      : ${arg_LINK}")
-		message("	Object    : ${arg_OBJECT}")
+		message("	Link	  : ${arg_LINK}")
+		message("	Object	: ${arg_OBJECT}")
 		message("	NoGroup   : ${arg_NO_GROUP}")
-		message("	Group     : ${__wish_current_group}")
+		message("	Group	 : ${__wish_current_group}")
 	endif()
 endfunction()
 

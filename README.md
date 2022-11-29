@@ -120,7 +120,7 @@ TODO
 
 # Example
 wish_linker_flags(
-    Release GNU -mwindows
+	Release GNU -mwindows
 )
 ```
 
@@ -147,8 +147,8 @@ wish_create_external(
 	GIT_REPOSITORY https://github.com/catchorg/Catch2
 	GIT_TAG v3.0.1
 	CMAKE_ARGS
-        -DCATCH_INSTALL_DOCS=OFF
-        -DCATCH_INSTALL_EXTRAS=OFF
+		-DCATCH_INSTALL_DOCS=OFF
+		-DCATCH_INSTALL_EXTRAS=OFF
 	LINK Catch2Main Catch2
 )
 ```

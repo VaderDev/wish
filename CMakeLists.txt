@@ -23,7 +23,7 @@ message(STATUS "CXX compiler version: ${CMAKE_CXX_COMPILER_VERSION}")
 # Paths --------------------------------------------------------------------------------------------
 
 set(PATH_EXT_IDE ext)
-set(PATH_EXT     ${CMAKE_SOURCE_DIR}/ext)
+set(PATH_EXT	 ${CMAKE_SOURCE_DIR}/ext)
 set(PATH_EXT_SRC ${CMAKE_SOURCE_DIR}/ext_src)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
@@ -130,8 +130,8 @@ wish_create_external(
 	GIT_REPOSITORY https://github.com/catchorg/Catch2
 	GIT_TAG v3.0.1
 	CMAKE_ARGS
-        -DCATCH_INSTALL_DOCS=OFF
-        -DCATCH_INSTALL_EXTRAS=OFF
+		-DCATCH_INSTALL_DOCS=OFF
+		-DCATCH_INSTALL_EXTRAS=OFF
 	LINK Catch2Main Catch2
 )
 
@@ -174,7 +174,7 @@ wish_create_external(
 #	GIT_REPOSITORY https://github.com/cpplibv/vide.git
 #	GIT_TAG 0a8204b7d4e2ae83540cb8418efd21157f8202ab
 #	CMAKE_ARGS
-#        -DJUST_INSTALL_VIDE=ON
+#		-DJUST_INSTALL_VIDE=ON
 #)
 
 # === Targets =====================================================================================
