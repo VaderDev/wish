@@ -10,16 +10,18 @@ TODO: Documentation
 
 #### Setup
 
-Grab the latest wish hook script
+Grab the latest wish hook script from your project's root
 TODO: More documentation
 ```
 mkdir -p cmake && wget https://raw.githubusercontent.com/VaderY/wish/master/cmake/wish.cmake -O cmake/wish.cmake
+# OR
+wget https://raw.githubusercontent.com/VaderY/wish/master/cmake/wish.cmake -P cmake/
 ```
 
 Inside your root CMakeLists.txt file just set the version and include the primary script:
 TODO: More documentation
 ```
-set(WISH_REQUEST_VERSION v5.0.3)
+set(WISH_REQUEST_VERSION v5.0.4)
 include(cmake/wish.cmake)
 ```
 
@@ -29,6 +31,8 @@ include(cmake/wish.cmake)
 
 TODO: Format, place
 
+- v5.0.4
+  - Use a lockfile during wish install and update
 - v5.0.3
   - Make wish_group usage optional
   - Add support for library aliases

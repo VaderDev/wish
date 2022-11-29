@@ -1,8 +1,8 @@
 
 if (NOT DEFINED WISH_REQUEST_VERSION)
-    message(FATAL_ERROR "Wish: WISH_REQUEST_VERSION is not defined (Example: v5.0.2)\n"
+    message(FATAL_ERROR "Wish: WISH_REQUEST_VERSION is not defined (Example: v5.0.4)\n"
             "  Usage:\n"
-            "    set(WISH_REQUEST_VERSION v5.0.2)\n"
+            "    set(WISH_REQUEST_VERSION v5.0.4)\n"
             "    include(cmake/wish.cmake)\n")
 endif ()
 
@@ -19,6 +19,8 @@ if (NOT WISH_REQUEST_VERSION STREQUAL WISH_CURRENT_VERSION)
     else ()
         message(STATUS "Updating Wish from ${WISH_CURRENT_VERSION} to ${WISH_REQUEST_VERSION}...")
     endif ()
+
+	file(LOCK ${CMAKE_CURRENT_LIST_FILE}.lock GUARD FILE)
 
     set(wish_path_lite ${CMAKE_CURRENT_BINARY_DIR}/wish_lite.zip)
 
