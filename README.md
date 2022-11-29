@@ -31,10 +31,10 @@ include(cmake/wish.cmake)
 
 TODO: Format, place
 TODO: Auto self update the wish.cmake script
-TODO: lockfiles sometimes stick around, its not a problem, but git can pick them up, place them somewhere where its gitignored
 
 - v5.0.5
   - Feature: Add automated library alias naming
+  - Fix: Change lockfile placement to be ignored by git
 - v5.0.4
   - Improvement: Use a lockfile during wish install and update
 - v5.0.3

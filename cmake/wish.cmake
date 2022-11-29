@@ -20,11 +20,12 @@ if (NOT WISH_REQUEST_VERSION STREQUAL WISH_CURRENT_VERSION)
         message(STATUS "Updating Wish from ${WISH_CURRENT_VERSION} to ${WISH_REQUEST_VERSION}...")
     endif ()
 
-	file(LOCK ${CMAKE_CURRENT_LIST_FILE}.lock GUARD FILE)
+	file(LOCK ${wish_path_install}/wish/wish.lock GUARD FILE)
 
     set(wish_path_lite ${CMAKE_CURRENT_BINARY_DIR}/wish_lite.zip)
 
-    file(REMOVE ${wish_path_install}/wish/)
+	file(GLOB_RECURSE wish_installed_files ${wish_path_install}/wish/**.cmake)
+	file(REMOVE ${wish_installed_files})
     file(DOWNLOAD https://github.com/VaderY/wish/releases/download/${WISH_REQUEST_VERSION}/wish_lite.zip ${wish_path_lite})
     file(ARCHIVE_EXTRACT INPUT ${wish_path_lite} DESTINATION ${wish_path_install})
     file(WRITE ${wish_path_install}/wish/.gitignore "*")
