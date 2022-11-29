@@ -21,7 +21,7 @@ wget https://raw.githubusercontent.com/VaderY/wish/master/cmake/wish.cmake -P cm
 Inside your root CMakeLists.txt file just set the version and include the primary script:
 TODO: More documentation
 ```
-set(WISH_REQUEST_VERSION v5.0.4)
+set(WISH_REQUEST_VERSION v5.0.5)
 include(cmake/wish.cmake)
 ```
 
@@ -30,21 +30,26 @@ include(cmake/wish.cmake)
 #### Release notes
 
 TODO: Format, place
+TODO: Auto self update the wish.cmake script
+TODO: lockfiles sometimes stick around, its not a problem, but git can pick them up, place them somewhere where its gitignored
 
+- v5.0.5
+  - Feature: Add automated library alias naming
 - v5.0.4
-  - Use a lockfile during wish install and update
+  - Improvement: Use a lockfile during wish install and update
 - v5.0.3
-  - Make wish_group usage optional
-  - Add support for library aliases
+  - Feature: Add support for library aliases
+  - Improvement: Make wish_group usage optional
 - v5.0.2
-  - Enable USES_TERMINAL_DOWNLOAD for externals
-- v5.0.1
-  - Test release
+  - Improvement: Enable USES_TERMINAL_DOWNLOAD for externals
 - v5.0.0
-  - Automated wish install and update
-- v4.2 - Add wish_linker_flags
-- v4.1 - Fix double globbing during newly created generated files
-- v4.0 - Initial release in this format (history)
+  - Feature: Automated wish install and update
+- v4.2
+  - Feature: Add wish_linker_flags
+- v4.1
+  - Improvement: Fix double globbing during newly created generated files
+- v4.0
+  - Release: Initial release in this format (history)
 
 -----
 
@@ -186,7 +191,7 @@ wish_create_executable(
 wish_create_library
 ```
 wish_create_library(
-	TARGET <target name> (STATIC | SHARED | INTERFACE)
+	TARGET <target or alias::name> (STATIC | SHARED | INTERFACE)
 	ALIAS <alias::name>...
 	SOURCE <source glob pattern>...
 	OBJECT <object targets>...

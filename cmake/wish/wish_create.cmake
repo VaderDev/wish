@@ -329,6 +329,12 @@ function(wish_create_library)
 #		# TODO P5: Target might be INTERFACE
 #	endif()
 
+	# Detect and remap alias named target
+	if (${arg_TARGET} MATCHES "::")
+		list(APPEND arg_ALIAS ${arg_TARGET})
+		string(REPLACE "::" "_" arg_TARGET ${arg_TARGET})
+	endif()
+
 	# generated files
 	if(arg_GENERATE)
 		__wish_generate(generated_outputs ${arg_GENERATE})
