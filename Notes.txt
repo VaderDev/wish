@@ -9,7 +9,7 @@ color diag is solved with CMake 3.24
 
 project version injection from cmake to source file
 
-include ext targets via cmake when they have support for it 
+include ext targets via cmake when they have support for it
 support ns::lib
 	most likely wish_group(NAMESPACE ns)
 
@@ -22,7 +22,6 @@ cmake presets
 
 
 improve Paths definition
-
 
 
 

@@ -21,7 +21,7 @@ wget https://raw.githubusercontent.com/VaderY/wish/master/cmake/wish.cmake -P cm
 Inside your root CMakeLists.txt file just set the version and include the primary script:
 TODO: More documentation
 ```
-set(WISH_REQUEST_VERSION v5.0.5)
+set(WISH_REQUEST_VERSION v5.1.0)
 include(cmake/wish.cmake)
 ```
 
@@ -32,6 +32,8 @@ include(cmake/wish.cmake)
 TODO: Format, place
 TODO: Auto self update the wish.cmake script
 
+- v5.1.0
+  - Fix: Resolve the error during first configure
 - v5.0.5
   - Feature: Add automated library alias naming
   - Fix: Change lockfile placement to be ignored by git
