@@ -275,7 +275,7 @@ endfunction()
 # --- Executable -----------------------------------------------------------------------------------
 
 function(wish_create_executable)
-	cmake_parse_arguments(arg "DEBUG;NO_GROUP" "TARGET" "SOURCE;OBJECT;GENERATE;LINK" ${ARGN})
+	cmake_parse_arguments(arg "DEBUG;NO_GROUP" "TARGET;OUTPUT_NAME" "SOURCE;OBJECT;GENERATE;LINK" ${ARGN})
 
 	# check
 	if(NOT arg_SOURCE AND NOT arg_OBJECT)
@@ -300,6 +300,7 @@ function(wish_create_executable)
 	add_executable(${arg_TARGET} ${every_source})
 	target_link_libraries(${arg_TARGET} ${arg_LINK} ${__wish_static_link_std})
 	target_link_libraries(${arg_TARGET} ${obj})
+	set_target_properties(${arg_TARGET} PROPERTIES OUTPUT_NAME "${arg_OUTPUT_NAME}")
 
 	# group
 	if (NOT ${arg_NO_GROUP})

@@ -2,40 +2,62 @@
 
 
 
-color diag is solved with CMake 3.24
-	https://gitlab.kitware.com/cmake/cmake/-/merge_requests/6990?utm_source=product&utm_medium=link&utm_campaign=CL&utm_content=2022.2
-	read into it and remove the relavant wish features
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 project version injection from cmake to source file
 
+
+
+
 include ext targets via cmake when they have support for it
-support ns::lib
-	most likely wish_group(NAMESPACE ns)
 
 
 
-
-cmake presets
-
-
-
-
-improve Paths definition
-
-
-
+wish: improve Paths definition
 
 TODO P3: wish: add support for skipping library build/links via directly amending the sources of a dependency (only for DEV build)
 TODO P3: wish: Implement a single file or line bootstrap (FetchContent)
-TODO P4: wish: Use a shared ext folder (set via an option, default to project/ext) (external folders must be unique based on every used external argument)
 
+TODO P4: wish: Use a shared ext folder (set via an option, default to project/ext) (external folders must be unique based on every used external argument)
 TODO P4: wish: Last chance for conan (wish is created even if conan can be used)
+
 TODO P4: wish: inheritance for wish_create_executable and create_library
 TODO P5: wish: flag or build options to turn on/off sanitizes
 TODO P5: wish: Recommend or easily produce somehow the configure flags:
 		-G"Ninja" -DCMAKE_BUILD_TYPE=DEV -DSKIP_EXTERNAL_CONFIGURES=TRUE -DFORCE_COLORED_OUTPUT=TRUE
 
+color diag is solved with CMake 3.24
+	https://gitlab.kitware.com/cmake/cmake/-/merge_requests/6990?utm_source=product&utm_medium=link&utm_campaign=CL&utm_content=2022.2
+	read into it and remove the relavant wish features
 
 
 

@@ -14,5 +14,6 @@ wish_create_executable(
 wish_create_executable(
 	TARGET sandbox_smart_aliases_main_aliased
 	SOURCE main.cpp
+	OUTPUT_NAME sandbox_named
 	LINK sandbox_aliases::lib
 )

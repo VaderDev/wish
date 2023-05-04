@@ -32,6 +32,8 @@ include(cmake/wish.cmake)
 TODO: Format, place
 TODO: Auto self update the wish.cmake script
 
+- v5.2.0
+  - Feature: Add OUTPUT_NAME support for wish_create_executable
 - v5.1.0
   - Fix: Resolve the error during first configure
 - v5.0.5
@@ -175,6 +177,7 @@ wish_create_executable(
 	TARGET <target name>
 	SOURCE <source glob pattern>...
 	OBJECT <object targets>...
+	OUTPUT_NAME <output name>
 	GENERATE <generator name> <input glob pattern>...
 	LINK <link targets or libraries>...
 	[NO_GROUP]
