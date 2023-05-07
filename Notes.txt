@@ -23,45 +23,6 @@
 
 
 
-
-
-
-
-
-wish: improve Paths definition
-	cmake output files should remain under the build folder
-		install should move it wherever
-		solves multi compiler output collisions
-
-project version injection from cmake to source file
-	VERSIONING
-		version info injection into the binary
-		use cmake
-		use libv.build/version
-		mainly rely on a single TU and use linker
-			no header stuff (incremental build win)
-
-		who defines the version?
-			external cmake variable/flag?
-			and/or env var
-			and/or cmake code
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 include ext targets via cmake when they have support for it
 
 

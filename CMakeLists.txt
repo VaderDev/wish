@@ -23,12 +23,12 @@ message(STATUS "CXX compiler version: ${CMAKE_CXX_COMPILER_VERSION}")
 # Paths --------------------------------------------------------------------------------------------
 
 set(PATH_EXT_IDE ext)
-set(PATH_EXT	 ${CMAKE_SOURCE_DIR}/ext)
+set(PATH_EXT	 ${CMAKE_SOURCE_DIR}/${PATH_EXT_IDE})
 set(PATH_EXT_SRC ${CMAKE_SOURCE_DIR}/ext_src)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib/${CMAKE_BUILD_TYPE})
+#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
+#set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
+#set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib/${CMAKE_BUILD_TYPE})
 
 # --- Options --------------------------------------------------------------------------------------
 
