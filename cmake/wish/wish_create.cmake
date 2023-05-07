@@ -40,7 +40,7 @@ macro(wish_group name)
 	set(__wish_group_${name})
 
 	add_custom_target(${name})
-	foreach(alias ${ARGN})
+	foreach(alias IN LISTS ARGN)
 		add_custom_target(${alias} DEPENDS ${name})
 	endforeach()
 endmacro()
@@ -90,7 +90,7 @@ endfunction()
 ## Defines get_NAME for fetching the ExternalProject and ext_NAME as lightweight INTERFACE target
 ## Unrecognized parameters after INCLUDE_DIR, LINK or DEFINE are forbidden.
 function(wish_create_external)
-	cmake_parse_arguments(arg "DEBUG;NO_GROUP;SKIP_CONFIGURE_AND_BUILD;SKIP_CONFIGURE;SKIP_BUILD" "NAME" "INCLUDE_DIR;LINK;DEFINE" ${ARGN})
+	cmake_parse_arguments(PARSE_ARGV 0 arg "DEBUG;NO_GROUP;SKIP_CONFIGURE_AND_BUILD;SKIP_CONFIGURE;SKIP_BUILD" "NAME" "INCLUDE_DIR;LINK;DEFINE")
 
 	set(temp_list ${__wish_external_raw_arguments})
 	list(APPEND temp_list ${ARGN})
@@ -132,7 +132,7 @@ function(wish_create_external)
 		list(APPEND arg_INCLUDE_DIR include)
 	endif()
 	set(temp_list ${__wish_external_include_directories})
-	foreach(var_include ${arg_INCLUDE_DIR})
+	foreach(var_include IN LISTS arg_INCLUDE_DIR)
 		target_include_directories(ext_${arg_NAME} SYSTEM INTERFACE ${PATH_EXT}/${arg_NAME}/${var_include})
 		list(APPEND temp_list ${PATH_EXT_IDE}/${arg_NAME}/${var_include})
 	endforeach()
@@ -145,7 +145,7 @@ function(wish_create_external)
 	target_link_libraries(ext_${arg_NAME} INTERFACE ${arg_LINK})
 
 	set(temp_list ${__wish_external_defines})
-	foreach(var_define ${arg_DEFINE})
+	foreach(var_define IN LISTS arg_DEFINE)
 		target_compile_definitions(ext_${arg_NAME} INTERFACE -D${var_define})
 		list(APPEND temp_list ${var_define})
 	endforeach()
@@ -181,7 +181,7 @@ set(__wish_generators "")
 # __wish_generator_output_rules_${generator_name} stores the generator input -> outputs rewrite rules
 
 function(wish_generator)
-	cmake_parse_arguments(arg "" "TARGET;COMMAND" "" ${ARGN})
+	cmake_parse_arguments(PARSE_ARGV 0 arg "" "TARGET;COMMAND" "")
 
 	set(temp_list ${__wish_generators})
 	list(APPEND temp_list ${arg_TARGET})
@@ -196,7 +196,7 @@ function(wish_generator)
 endfunction()
 
 function(__wish_generate out_generated_outputs)
-	cmake_parse_arguments(arg "" "" "${__wish_generators}" ${ARGN})
+	cmake_parse_arguments(PARSE_ARGV 0 arg "" "" "${__wish_generators}")
 
 #	# debug
 #	if(arg_DEBUG OR __wish_global_debug)
@@ -209,7 +209,7 @@ function(__wish_generate out_generated_outputs)
 
 	set(generated_outputs "")
 
-	foreach(generator ${__wish_generators})
+	foreach(generator IN LISTS __wish_generators)
 #		message("foreach generator	 : ${generator}")
 #		message("foreach ${arg_${generator}}	 : ${arg_${generator}}")
 ##		if (NOT ${arg_${generator}})
@@ -219,7 +219,7 @@ function(__wish_generate out_generated_outputs)
 
 		file(GLOB_RECURSE matching_files LIST_DIRECTORIES false RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS ${arg_${generator}})
 
-		foreach(matching_file ${matching_files})
+		foreach(matching_file IN LISTS matching_files)
 			set(output_files_rel "")
 			set(output_files_abs "") # For CMake/Ninja to properly track dependencies output has to use abs path
 			set(output_rules_left ${__wish_generator_output_rules_${generator}})
@@ -275,7 +275,7 @@ endfunction()
 # --- Executable -----------------------------------------------------------------------------------
 
 function(wish_create_executable)
-	cmake_parse_arguments(arg "DEBUG;NO_GROUP" "TARGET;OUTPUT_NAME" "SOURCE;CONFIGURE_SOURCE;OBJECT;GENERATE;LINK" ${ARGN})
+	cmake_parse_arguments(PARSE_ARGV 0 arg "DEBUG;NO_GROUP" "TARGET;OUTPUT_NAME" "SOURCE;CONFIGURE_SOURCE;OBJECT;GENERATE;LINK")
 
 	# check
 	if(NOT arg_SOURCE AND NOT arg_OBJECT)
@@ -337,7 +337,7 @@ endfunction()
 # --- Library --------------------------------------------------------------------------------------
 
 function(wish_create_library)
-	cmake_parse_arguments(arg "DEBUG;NO_GROUP;STATIC;SHARED;INTERFACE" "TARGET" "ALIAS;SOURCE;CONFIGURE_SOURCE;OBJECT;GENERATE;LINK" ${ARGN})
+	cmake_parse_arguments(PARSE_ARGV 0 arg "DEBUG;NO_GROUP;STATIC;SHARED;INTERFACE" "TARGET" "ALIAS;SOURCE;CONFIGURE_SOURCE;OBJECT;GENERATE;LINK")
 
 	# check
 #	if(NOT arg_SOURCE AND NOT arg_OBJECT)
@@ -363,7 +363,7 @@ function(wish_create_library)
 	if(arg_CONFIGURE_SOURCE)
 		file(GLOB_RECURSE matching_configure_sources LIST_DIRECTORIES false RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS ${arg_CONFIGURE_SOURCE})
 	endif()
-	foreach(obj ${arg_OBJECT})
+	foreach(obj IN LISTS arg_OBJECT)
 		list(APPEND matching_sources $<TARGET_OBJECTS:${obj}>)
 	endforeach()
 
@@ -399,7 +399,7 @@ function(wish_create_library)
 	endif()
 
 	# alias
-	foreach(alias ${arg_ALIAS})
+	foreach(alias IN LISTS arg_ALIAS)
 		add_library(${alias} ALIAS ${arg_TARGET})
 	endforeach()
 
@@ -430,7 +430,7 @@ endfunction()
 # --- Object ---------------------------------------------------------------------------------------
 
 function(wish_create_object)
-	cmake_parse_arguments(arg "DEBUG;NO_GROUP" "TARGET" "SOURCE;CONFIGURE_SOURCE;OBJECT;GENERATE;LINK" ${ARGN})
+	cmake_parse_arguments(PARSE_ARGV 0 arg "DEBUG;NO_GROUP" "TARGET" "SOURCE;CONFIGURE_SOURCE;OBJECT;GENERATE;LINK")
 
 	# check
 	if(NOT arg_SOURCE AND NOT arg_OBJECT)
@@ -447,7 +447,7 @@ function(wish_create_object)
 	if(arg_CONFIGURE_SOURCE)
 		file(GLOB_RECURSE matching_configure_sources LIST_DIRECTORIES false RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS ${arg_CONFIGURE_SOURCE})
 	endif()
-	foreach(obj ${arg_OBJECT})
+	foreach(obj IN LISTS arg_OBJECT)
 		list(APPEND matching_sources $<TARGET_OBJECTS:${obj}>)
 	endforeach()
 
