@@ -1,0 +1,44 @@
+#
+
+wish_create_library(
+	TARGET versions::lib STATIC
+	SOURCE lib.cpp
+)
+
+# Set/override variables with:
+# cmake -B build/dev/ . -DWISH_BUILD_VERSION_MAJOR=2
+# cmake -B build/dev/ . -DWISH_BUILD_VERSION_MINOR=2
+# ...
+#
+# cmake -B build/dev/ . \
+# -DWISH_BUILD_VERSION_MAJOR="" \
+# -DWISH_BUILD_VERSION_MINOR="" \
+# -DWISH_BUILD_VERSION_PATCH="" \
+# -DWISH_BUILD_VERSION_NAME="" \
+# -DWISH_BUILD_VARIANT="" \
+# -DWISH_BUILD_NUMBER=""
+
+set(WISH_BUILD_VERSION_MAJOR 1 CACHE STRING "BUILD_VERSION_MAJOR")
+set(WISH_BUILD_VERSION_MINOR 0 CACHE STRING "BUILD_VERSION_MINOR")
+set(WISH_BUILD_VERSION_PATCH 5 CACHE STRING "BUILD_VERSION_PATCH")
+set(WISH_BUILD_VERSION_NAME "Sunlight" CACHE STRING "BUILD_VERSION_NAME")
+set(WISH_BUILD_VARIANT "Development" CACHE STRING "BUILD_VARIANT")
+set(WISH_BUILD_NUMBER 123456 CACHE STRING "BUILD_NUMBER")
+#set(WISH_BUILD_DATETIME 123456)
+string(TIMESTAMP WISH_BUILD_DATETIME UTC)
+string(UUID WISH_BUILD_UUID NAMESPACE 7f3acccc-c2df-4cfb-9664-320eb7204b8c NAME "BUILD-UUID" TYPE SHA1)
+
+wish_create_executable(
+	TARGET sandbox_versions
+	OUTPUT_NAME versions
+	SOURCE main.cpp
+	CONFIGURE_SOURCE version.cpp.in
+	LINK versions::lib
+)
+
+#configure_file(version.cpp.in version.cpp @ONLY USE_SOURCE_PERMISSIONS NEWLINE_STYLE LF)
+#target_sources(sandbox_versions PRIVATE version.cpp)
+
+#wish_version(
+#	TARGET sandbox_versions
+#)

@@ -159,18 +159,18 @@ function(wish_create_external)
 	# debug
 	if(arg_DEBUG OR __wish_global_debug)
 		message("External target: ext_${arg_NAME}, get_${arg_NAME}")
-		message("	Name	  : ${arg_NAME}")
-		message("	Define	: ${arg_DEFINE}")
-		message("	ExtDir	: ${PATH_EXT}/${arg_NAME}")
+		message("	Name      : ${arg_NAME}")
+		message("	Define    : ${arg_DEFINE}")
+		message("	ExtDir    : ${PATH_EXT}/${arg_NAME}")
 		message("	ExtSource : ${PATH_EXT_SRC}/${arg_NAME}")
 		message("	IncludeDir: ${arg_INCLUDE_DIR}")
-		message("	Link	  : ${arg_LINK}")
+		message("	Link      : ${arg_LINK}")
 		message("	SkipCfg   : ${arg_SKIP_CONFIGURE}")
 		message("	SkipBld   : ${arg_SKIP_BUILD}")
 		message("	SkipCfgBld: ${arg_SKIP_CONFIGURE_AND_BUILD}")
 		message("	Unparsed  : ${arg_UNPARSED_ARGUMENTS}")
 		message("	NoGroup   : ${arg_NO_GROUP}")
-		message("	Group	 : ${__wish_current_group}")
+		message("	Group     : ${__wish_current_group}")
 	endif()
 endfunction()
 
@@ -275,7 +275,7 @@ endfunction()
 # --- Executable -----------------------------------------------------------------------------------
 
 function(wish_create_executable)
-	cmake_parse_arguments(arg "DEBUG;NO_GROUP" "TARGET;OUTPUT_NAME" "SOURCE;OBJECT;GENERATE;LINK" ${ARGN})
+	cmake_parse_arguments(arg "DEBUG;NO_GROUP" "TARGET;OUTPUT_NAME" "SOURCE;CONFIGURE_SOURCE;OBJECT;GENERATE;LINK" ${ARGN})
 
 	# check
 	if(NOT arg_SOURCE AND NOT arg_OBJECT)
@@ -289,7 +289,10 @@ function(wish_create_executable)
 
 	# glob
 	file(GLOB_RECURSE matching_sources LIST_DIRECTORIES false RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS ${arg_SOURCE})
-	foreach(obj ${arg_OBJECT})
+	if(arg_CONFIGURE_SOURCE)
+		file(GLOB_RECURSE matching_configure_sources LIST_DIRECTORIES false RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS ${arg_CONFIGURE_SOURCE})
+	endif()
+	foreach(obj IN LISTS arg_OBJECT)
 		list(APPEND matching_sources $<TARGET_OBJECTS:${obj}>)
 	endforeach()
 
@@ -302,6 +305,17 @@ function(wish_create_executable)
 	target_link_libraries(${arg_TARGET} ${obj})
 	set_target_properties(${arg_TARGET} PROPERTIES OUTPUT_NAME "${arg_OUTPUT_NAME}")
 
+	# configure files
+	if(matching_configure_sources)
+		foreach(in_file IN LISTS matching_configure_sources)
+			string(REGEX REPLACE "\\.in$" "" out_file ${in_file})
+			# in_file  is in CMAKE_CURRENT_SOURCE_DIR
+			# out_file is in CMAKE_CURRENT_BINARY_DIR
+			configure_file(${in_file} ${out_file} @ONLY USE_SOURCE_PERMISSIONS NEWLINE_STYLE LF)
+			target_sources(${arg_TARGET} PRIVATE ${out_file})
+		endforeach()
+	endif()
+
 	# group
 	if (NOT ${arg_NO_GROUP})
 		__wish_add_member_to_group(${arg_TARGET})
@@ -310,19 +324,20 @@ function(wish_create_executable)
 	# debug
 	if(arg_DEBUG OR __wish_global_debug)
 		message("Executable target: ${arg_TARGET}")
-		message("	Glob	  : ${arg_SOURCE}")
-		message("	Source	: ${matching_sources}")
-		message("	Object	: ${arg_OBJECT}")
-		message("	Link	  : ${arg_LINK}")
+		message("	Glob      : ${arg_SOURCE}")
+		message("	ConfSource: ${arg_CONFIGURE_SOURCE}")
+		message("	Source    : ${matching_sources}")
+		message("	Object    : ${arg_OBJECT}")
+		message("	Link      : ${arg_LINK}")
 		message("	NoGroup   : ${arg_NO_GROUP}")
-		message("	Group	 : ${__wish_current_group}")
+		message("	Group     : ${__wish_current_group}")
 	endif()
 endfunction()
 
 # --- Library --------------------------------------------------------------------------------------
 
 function(wish_create_library)
-	cmake_parse_arguments(arg "DEBUG;NO_GROUP;STATIC;SHARED;INTERFACE" "TARGET" "ALIAS;SOURCE;OBJECT;GENERATE;LINK" ${ARGN})
+	cmake_parse_arguments(arg "DEBUG;NO_GROUP;STATIC;SHARED;INTERFACE" "TARGET" "ALIAS;SOURCE;CONFIGURE_SOURCE;OBJECT;GENERATE;LINK" ${ARGN})
 
 	# check
 #	if(NOT arg_SOURCE AND NOT arg_OBJECT)
@@ -344,6 +359,9 @@ function(wish_create_library)
 	# glob
 	if(arg_SOURCE)
 		file(GLOB_RECURSE matching_sources LIST_DIRECTORIES false RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS ${arg_SOURCE})
+	endif()
+	if(arg_CONFIGURE_SOURCE)
+		file(GLOB_RECURSE matching_configure_sources LIST_DIRECTORIES false RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS ${arg_CONFIGURE_SOURCE})
 	endif()
 	foreach(obj ${arg_OBJECT})
 		list(APPEND matching_sources $<TARGET_OBJECTS:${obj}>)
@@ -369,6 +387,18 @@ function(wish_create_library)
 #	add_library(${arg_TARGET} $<IF:$<BOOL:${arg_STATIC}>,"STATIC",""> $<IF:$<BOOL:${arg_INTERFACE}>,"INTERFACE",""> ${matching_sources} ${target_objects})
 #	target_link_libraries(${arg_TARGET} $<IF:$<BOOL:${arg_INTERFACE}>,"INTERFACE",""> ${arg_LINK})
 
+	# configure files
+	if(matching_configure_sources)
+		foreach(in_file IN LISTS matching_configure_sources)
+			string(REGEX REPLACE "\\.in$" "" out_file ${in_file})
+			# in_file  is in CMAKE_CURRENT_SOURCE_DIR
+			# out_file is in CMAKE_CURRENT_BINARY_DIR
+			configure_file(${in_file} ${out_file} @ONLY USE_SOURCE_PERMISSIONS NEWLINE_STYLE LF)
+			target_sources(${arg_TARGET} PRIVATE ${out_file})
+		endforeach()
+	endif()
+
+	# alias
 	foreach(alias ${arg_ALIAS})
 		add_library(${alias} ALIAS ${arg_TARGET})
 	endforeach()
@@ -381,25 +411,26 @@ function(wish_create_library)
 	# debug
 	if(arg_DEBUG OR __wish_global_debug)
 		message("Library target: ${arg_TARGET}")
-		message("	Glob	  : ${arg_SOURCE}")
-		message("	Source	: ${matching_sources}")
-		message("	Object	: ${arg_OBJECT}")
+		message("	Glob      : ${arg_SOURCE}")
+		message("	Source    : ${matching_sources}")
+		message("	ConfSource: ${arg_CONFIGURE_SOURCE}")
+		message("	Object    : ${arg_OBJECT}")
 		message("	Generate  : ${arg_GENERATE}")
 		message("	Generated : ${generated_outputs}")
-		message("	Alias	 : ${arg_ALIAS}")
-		message("	Link	  : ${arg_LINK}")
-		message("	Static	: ${arg_STATIC}")
-		message("	Shared	: ${arg_SHARED}")
+		message("	Alias     : ${arg_ALIAS}")
+		message("	Link      : ${arg_LINK}")
+		message("	Static    : ${arg_STATIC}")
+		message("	Shared    : ${arg_SHARED}")
 		message("	Interface : ${arg_INTERFACE}")
 		message("	NoGroup   : ${arg_NO_GROUP}")
-		message("	Group	 : ${__wish_current_group}")
+		message("	Groug     : ${__wish_current_group}")
 	endif()
 endfunction()
 
 # --- Object ---------------------------------------------------------------------------------------
 
 function(wish_create_object)
-	cmake_parse_arguments(arg "DEBUG;NO_GROUP" "TARGET" "SOURCE;OBJECT;GENERATE;LINK" ${ARGN})
+	cmake_parse_arguments(arg "DEBUG;NO_GROUP" "TARGET" "SOURCE;CONFIGURE_SOURCE;OBJECT;GENERATE;LINK" ${ARGN})
 
 	# check
 	if(NOT arg_SOURCE AND NOT arg_OBJECT)
@@ -413,6 +444,9 @@ function(wish_create_object)
 
 	# glob
 	file(GLOB_RECURSE matching_sources LIST_DIRECTORIES false RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS ${arg_SOURCE})
+	if(arg_CONFIGURE_SOURCE)
+		file(GLOB_RECURSE matching_configure_sources LIST_DIRECTORIES false RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS ${arg_CONFIGURE_SOURCE})
+	endif()
 	foreach(obj ${arg_OBJECT})
 		list(APPEND matching_sources $<TARGET_OBJECTS:${obj}>)
 	endforeach()
@@ -423,6 +457,17 @@ function(wish_create_object)
 
 	add_library(${arg_TARGET} OBJECT ${every_source})
 
+	# configure files
+	if(matching_configure_sources)
+		foreach(in_file IN LISTS matching_configure_sources)
+			string(REGEX REPLACE "\\.in$" "" out_file ${in_file})
+			# in_file  is in CMAKE_CURRENT_SOURCE_DIR
+			# out_file is in CMAKE_CURRENT_BINARY_DIR
+			configure_file(${in_file} ${out_file} @ONLY USE_SOURCE_PERMISSIONS NEWLINE_STYLE LF)
+			target_sources(${arg_TARGET} PRIVATE ${out_file})
+		endforeach()
+	endif()
+
 	# group
 	if (NOT ${arg_NO_GROUP})
 		__wish_add_member_to_group(${arg_TARGET})
@@ -431,14 +476,15 @@ function(wish_create_object)
 	# debug
 	if(arg_DEBUG OR __wish_global_debug)
 		message("Object target: ${arg_TARGET}")
-		message("	Glob	  : ${arg_SOURCE}")
-		message("	Source	: ${matching_sources}")
+		message("	Glob      : ${arg_SOURCE}")
+		message("	Source    : ${matching_sources}")
+		message("	ConfSource: ${arg_CONFIGURE_SOURCE}")
 		message("	Generate  : ${arg_GENERATE}")
 		message("	Generated : ${generated_outputs}")
-		message("	Link	  : ${arg_LINK}")
-		message("	Object	: ${arg_OBJECT}")
+		message("	Link      : ${arg_LINK}")
+		message("	Object    : ${arg_OBJECT}")
 		message("	NoGroup   : ${arg_NO_GROUP}")
-		message("	Group	 : ${__wish_current_group}")
+		message("	Group     : ${__wish_current_group}")
 	endif()
 endfunction()
 

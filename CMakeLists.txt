@@ -128,7 +128,7 @@ wish_group(group_external ext) # --- External ----------------------------------
 wish_create_external(
 	NAME catch
 	GIT_REPOSITORY https://github.com/catchorg/Catch2
-	GIT_TAG v3.0.1
+	GIT_TAG v3.3.2
 	CMAKE_ARGS
 		-DCATCH_INSTALL_DOCS=OFF
 		-DCATCH_INSTALL_EXTRAS=OFF
@@ -240,8 +240,10 @@ wish_create_executable(
 
 # -------------------------------------------------------------------------------------------------
 
+include_directories(sandbox)
 add_subdirectory(sandbox/aliases)
 add_subdirectory(sandbox/smart_aliases)
+add_subdirectory(sandbox/versions)
 
 # -------------------------------------------------------------------------------------------------
 

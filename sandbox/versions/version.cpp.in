@@ -1,0 +1,16 @@
+// Created by Vader on 2022.07.10..
+
+#include <versions/version.hpp>
+
+
+libv::build_info build{
+		libv::version_number{
+			@WISH_BUILD_VERSION_MAJOR@,
+			@WISH_BUILD_VERSION_MINOR@,
+			@WISH_BUILD_VERSION_PATCH@},
+		"@WISH_BUILD_VERSION_NAME@",
+		"@WISH_BUILD_VARIANT@",
+		@WISH_BUILD_NUMBER@,
+		"@WISH_BUILD_DATETIME@",
+		"@WISH_BUILD_UUID@"
+};
