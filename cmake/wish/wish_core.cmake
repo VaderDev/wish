@@ -6,7 +6,10 @@ include(ExternalProject)
 
 include(cmake/wish/wish_configuration.cmake)
 include(cmake/wish/wish_create.cmake)
+include(cmake/wish/wish_debug.cmake)
 include(cmake/wish/wish_flags.cmake)
+include(cmake/wish/wish_package.cmake)
+include(cmake/wish/wish_resource.cmake)
 include(cmake/wish/wish_system.cmake)
 include(cmake/wish/wish_version.cmake)
 

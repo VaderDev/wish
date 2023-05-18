@@ -303,7 +303,29 @@ function(wish_create_executable)
 	add_executable(${arg_TARGET} ${every_source})
 	target_link_libraries(${arg_TARGET} ${arg_LINK} ${__wish_static_link_std})
 	target_link_libraries(${arg_TARGET} ${obj})
-	set_target_properties(${arg_TARGET} PROPERTIES OUTPUT_NAME "${arg_OUTPUT_NAME}")
+
+	# properties
+	if (arg_OUTPUT_NAME)
+		set_target_properties(${arg_TARGET} PROPERTIES OUTPUT_NAME "${arg_OUTPUT_NAME}")
+	endif ()
+
+	# Set the following preprocessor defines:
+	#	WISH_BUILD_PACKAGE [0/1] - 1 if the current build types is "package", 0 otherwise
+	#	WISH_ENABLE_RESOURCE_MAPPING [0/1] - 0 if the current build types is "package", 1 otherwise
+	#	WISH_PATH_TO_CURRENT_SOURCE [string] - relative path from the binary to the cmake current source directory
+	#	WISH_PATH_TO_SOURCE [string] - relative path from the binary to the cmake source directory
+	if (CMAKE_BUILD_TYPE STREQUAL "package")
+		target_compile_definitions(${arg_TARGET} PRIVATE WISH_BUILD_PACKAGE=1)
+		target_compile_definitions(${arg_TARGET} PRIVATE WISH_ENABLE_RESOURCE_MAPPING=0)
+	else ()
+		target_compile_definitions(${arg_TARGET} PRIVATE WISH_BUILD_PACKAGE=0)
+		target_compile_definitions(${arg_TARGET} PRIVATE WISH_ENABLE_RESOURCE_MAPPING=1)
+	endif ()
+
+	file(RELATIVE_PATH path_to_current_source "${CMAKE_CURRENT_BINARY_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}")
+	file(RELATIVE_PATH path_to_source "${CMAKE_CURRENT_BINARY_DIR}" "${CMAKE_SOURCE_DIR}")
+	target_compile_definitions(${arg_TARGET} PRIVATE WISH_PATH_TO_CURRENT_SOURCE="${path_to_current_source}")
+	target_compile_definitions(${arg_TARGET} PRIVATE WISH_PATH_TO_SOURCE="${path_to_source}")
 
 	# configure files
 	if(matching_configure_sources)
@@ -311,7 +333,7 @@ function(wish_create_executable)
 			string(REGEX REPLACE "\\.in$" "" out_file ${in_file})
 			# in_file  is in CMAKE_CURRENT_SOURCE_DIR
 			# out_file is in CMAKE_CURRENT_BINARY_DIR
-			configure_file(${in_file} ${out_file} @ONLY USE_SOURCE_PERMISSIONS NEWLINE_STYLE LF)
+			configure_file(${in_file} ${out_file} @ONLY USE_SOURCE_PERMISSIONS)
 			target_sources(${arg_TARGET} PRIVATE ${out_file})
 		endforeach()
 	endif()
@@ -393,7 +415,7 @@ function(wish_create_library)
 			string(REGEX REPLACE "\\.in$" "" out_file ${in_file})
 			# in_file  is in CMAKE_CURRENT_SOURCE_DIR
 			# out_file is in CMAKE_CURRENT_BINARY_DIR
-			configure_file(${in_file} ${out_file} @ONLY USE_SOURCE_PERMISSIONS NEWLINE_STYLE LF)
+			configure_file(${in_file} ${out_file} @ONLY USE_SOURCE_PERMISSIONS)
 			target_sources(${arg_TARGET} PRIVATE ${out_file})
 		endforeach()
 	endif()
@@ -463,7 +485,7 @@ function(wish_create_object)
 			string(REGEX REPLACE "\\.in$" "" out_file ${in_file})
 			# in_file  is in CMAKE_CURRENT_SOURCE_DIR
 			# out_file is in CMAKE_CURRENT_BINARY_DIR
-			configure_file(${in_file} ${out_file} @ONLY USE_SOURCE_PERMISSIONS NEWLINE_STYLE LF)
+			configure_file(${in_file} ${out_file} @ONLY USE_SOURCE_PERMISSIONS)
 			target_sources(${arg_TARGET} PRIVATE ${out_file})
 		endforeach()
 	endif()

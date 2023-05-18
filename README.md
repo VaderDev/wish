@@ -33,27 +33,26 @@ TODO: Format, place
 TODO: Auto self update the wish.cmake script
 
 - v5.2.0
-  - Feature: Add OUTPUT_NAME support for wish_create_executable
-  - Feature: Add CONFIGURE_SOURCE support for wish_create_[executable,library,object] functions
-  - Feature: ...
-  - Improvement: ...
-  - Improvement: ...
+  - New Feature: Add CONFIGURE_SOURCE for wish_create_executable, _library and _object functions
+  - Experimental: Implement wish_resource_mapping
+  - Experimental: Implement wish_package
+  - Improvement: Add OUTPUT_NAME support for wish_create_executable
 - v5.1.0
   - Fix: Resolve the error during first configure
 - v5.0.5
-  - Feature: Add automated library alias naming
+  - New Feature: Add automated library alias naming
   - Fix: Change lockfile placement to be ignored by git
 - v5.0.4
   - Improvement: Use a lockfile during wish install and update
 - v5.0.3
-  - Feature: Add support for library aliases
+  - New Feature: Add support for library aliases
   - Improvement: Make wish_group usage optional
 - v5.0.2
   - Improvement: Enable USES_TERMINAL_DOWNLOAD for externals
 - v5.0.0
-  - Feature: Automated wish install and update
+  - New Feature: Automated wish install and update
 - v4.2
-  - Feature: Add wish_linker_flags
+  - New Feature: Add wish_linker_flags
 - v4.1
   - Improvement: Fix double globbing during newly created generated files
 - v4.0
@@ -180,7 +179,7 @@ wish_create_executable
 wish_create_executable(
 	TARGET <target name>
 	SOURCE <source glob pattern>...
-	CONFIGURE_SOURCE <source glob pattern>...
+	CONFIGURE_SOURCE <source glob pattern.in>...
 	OBJECT <object targets>...
 	OUTPUT_NAME <output name>
 	GENERATE <generator name> <input glob pattern>...
@@ -204,7 +203,7 @@ wish_create_library(
 	TARGET <target or alias::name> (STATIC | SHARED | INTERFACE)
 	ALIAS <alias::name>...
 	SOURCE <source glob pattern>...
-	CONFIGURE_SOURCE <source glob pattern>...
+	CONFIGURE_SOURCE <source glob pattern.in>...
 	OBJECT <object targets>...
 	GENERATE <generator name> <input glob pattern>...
 	LINK <link targets or libraries>...

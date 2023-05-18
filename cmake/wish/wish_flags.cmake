@@ -2,7 +2,7 @@
 
 include_guard(GLOBAL)
 
-# --- Warning -----------------------------------------------------------------------------------
+# --- Flags -------------------------------------------------------------------------------------
 
 function(_aux_wish_collect_compiler_flags compile_or_link_flag output)
 	set(result)
@@ -111,7 +111,7 @@ macro(wish_optimization_flags)
 	elseif(CMAKE_BUILD_TYPE STREQUAL "dev")
 		add_compile_options(-O3)
 
-	elseif(CMAKE_BUILD_TYPE STREQUAL "release")
+	elseif(CMAKE_BUILD_TYPE STREQUAL "release" OR CMAKE_BUILD_TYPE STREQUAL "package")
 		add_compile_options(-O3)
 		add_compile_options(-flto)
 		SET(CMAKE_AR "gcc-ar")

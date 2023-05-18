@@ -15,7 +15,7 @@ namespace libv {
 struct version_number {
 	uint16_t major = 0; /// Breaking changes
 	uint16_t minor = 0; /// Non-breaking additions
-	uint16_t patch = 0; /// Bug fix only no changes
+	uint16_t patch = 0; /// Bug fix only, no feature changes
 
 public:
 	constexpr inline version_number() noexcept = default;
@@ -50,29 +50,6 @@ struct build_info {
 	// std::chrono::utc_clock::time_point build_time;
 	std::string build_time;
 	std::string build_uuid;
-
-//	... build_number;
-//	... build_hash;
-//	... build_date / build_time;
-//	... git_commit_number;
-//	... git_branch;
-//	... variant;
-//  std::string compiler;
-//  std::string build_type;
-//  std::chrono::system_clock::time_point build_time;
-//	std::optional<libv::hash::SHA1> git_hash;
-//
-//	? uint8_t stage;
-//		Alpha
-//		Beta
-//		Release candidate
-//		Release
-//
-//		Stable
-//
-//	WISH_GIT_BRANCH
-//	WISH_GIT_COMMIT_HASH
-//	WISH_DATE_SHORT WISH_TIME_SHORT
 };
 
 //extern BuildInfo build;

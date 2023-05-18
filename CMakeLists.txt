@@ -4,14 +4,13 @@ cmake_minimum_required(VERSION 3.20)
 project(wish)
 
 #set(CMAKE_VERBOSE_MAKEFILE on)
-#set(CMAKE_BUILD_TYPE DEBUG)
-#set(CMAKE_BUILD_TYPE RELEASE)
 
+#include(cmake/wish.cmake) # Normal include would be this
 include(cmake/wish/wish_core.cmake)
 
 # --------------------------------------------------------------------------------------------------
 
-wish_configurations(DEFAULT Release Dev Debug)
+wish_configurations(debug dev DEFAULT release package)
 
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 message(STATUS "Processor count: ${WISH_PROCESSOR_COUNT}")

@@ -7,7 +7,7 @@ include_guard(GLOBAL)
 macro(wish_configurations)
 	cmake_parse_arguments(arg "" "DEFAULT" "" ${ARGN})
 
-#	set(CMAKE_CONFIGURATION_TYPES "Release;Dev;Debug" CACHE STRING "" FORCE)
+#	set(CMAKE_CONFIGURATION_TYPES "package;release;dev;debug" CACHE STRING "" FORCE)
 	set(CMAKE_CONFIGURATION_TYPES "${arg_UNPARSED_ARGUMENTS};${arg_DEFAULT}" CACHE STRING "" FORCE)
 
 	if (NOT CMAKE_BUILD_TYPE)

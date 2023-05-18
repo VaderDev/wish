@@ -6,27 +6,84 @@
 
 
 
+place.it:
+	New C++ Defines for executables:
+		WISH_BUILD_PACKAGE
+		WISH_ENABLE_RESOURCE_MAPPING
+		WISH_PATH_TO_CURRENT_SOURCE
+		WISH_PATH_TO_SOURCE
+
+	New build type "package"
+		only use for package_* targets to create the packages
+		sets up the change_current_path
+		sets up the resource mapping
 
 
 
 
 
 
+runtime stuffy
+	folder change from binary to source
+	when to active the resource mapping macro
+
+
+# ? ! error if resource file is missing at configure time
 
 
 
+cmake -B build/dev .
+cmake -B build/dev . \
+    -DWISH_BUILD_VERSION_MAJOR="0" \
+    -DWISH_BUILD_VERSION_MINOR="0" \
+    -DWISH_BUILD_VERSION_PATCH="0" \
+    -DWISH_BUILD_VERSION_NAME="version-name" \
+    -DWISH_BUILD_VARIANT="development" \
+    -DWISH_BUILD_NUMBER="0" \
+    -DWISH_BUILD_DATETIME="2000-01-01T00:00:00Z" \
+    -DWISH_BUILD_UUID="00000000-0000-0000-0000-000000000000"
+cmake --build build/dev --target sandbox_versions
+cmake --build build/dev --target package_sandbox_versions
+cmake --install build/dev --prefix . --component sandbox_versions
 
 
 
+# -------------------------------------------------------------------------------------------------
 
 
 
+Packaging / Resource
+	Packaging and Resource mapping is two separate concepts
+		and there might be a third Resource "import/preprocess"
+
+	Resource mapping (Always happens):
+		- Defining resource files and their
+			build (aka dev) location and
+			runtime location
+		- Injecting these mapping into to source both at
+			build (aka dev) time and
+			runtime time
+
+	Packaging (Only happens during packaging)
+		Grabbing resource files and placing them into a folder
+		From the code always use the desired locations and rely on mapping
+		Mapping in release runtime is a noop
+		Release runtime ?!= ?== Release build type
+
+	Resource "import/preprocess"
+
+	Alternative approach:
+		runtime map, special flag to export, use exported map to package
+
+
+actual packaging:
+	CPACK https://cmake.org/cmake/help/book/mastering-cmake/chapter/Packaging%20With%20CPack.html
+
+
+# =================================================================================================
 
 
 include ext targets via cmake when they have support for it
-
-
-
 
 TODO P3: wish: add support for skipping library build/links via directly amending the sources of a dependency (only for DEV build)
 TODO P3: wish: Implement a single file or line bootstrap (FetchContent)

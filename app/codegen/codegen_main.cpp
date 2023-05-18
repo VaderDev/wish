@@ -54,7 +54,6 @@ template <typename Range, typename Key, typename Proj = std::identity>
 
 template <typename... Args>
 [[nodiscard]] inline std::string concat(Args&&... args) noexcept {
-	// TODO P4: libv.utility: Improve implementation to a real str cat, ostringstream performance is unacceptable
 	std::ostringstream ss;
 	(ss << ... << std::forward<Args>(args));
 	return std::move(ss).str();
@@ -522,10 +521,6 @@ struct SourceGeneratorLua {
 		return std::make_pair(result_hpp, result_cpp);
 	}
 };
-
-// TODO P2: Codegen hooks should be more free formed, more generalized:
-//  			enable function should accept a table where multiple hooks
-//				could be defined like: cpp/hpp - pre/post - class/members
 
 int main(int argc, const char** argv) {
 	SourceGeneratorLua eb;

@@ -1,35 +1,42 @@
 #
 
 wish_create_library(
-	TARGET versions::lib STATIC
-	SOURCE lib.cpp
+		TARGET versions::lib STATIC
+		SOURCE lib.cpp
 )
 
-# Set/override variables with a cmake:
-# cmake -B build/dev/ . \
-#     -DWISH_BUILD_VERSION_MAJOR="" \
-#     -DWISH_BUILD_VERSION_MINOR="" \
-#     -DWISH_BUILD_VERSION_PATCH="" \
-#     -DWISH_BUILD_VERSION_NAME="" \
-#     -DWISH_BUILD_VARIANT="" \
-#     -DWISH_BUILD_NUMBER="" \
-#     -DWISH_BUILD_DATETIME="" \
-#     -DWISH_BUILD_UUID=""
-
-string(TIMESTAMP CURRENT_BUILD_DATETIME UTC)
 set(WISH_BUILD_VERSION_MAJOR 0 CACHE STRING "BUILD_VERSION_MAJOR")
 set(WISH_BUILD_VERSION_MINOR 0 CACHE STRING "BUILD_VERSION_MINOR")
 set(WISH_BUILD_VERSION_PATCH 0 CACHE STRING "BUILD_VERSION_PATCH")
 set(WISH_BUILD_VERSION_NAME "version-name" CACHE STRING "BUILD_VERSION_NAME")
 set(WISH_BUILD_VARIANT "development" CACHE STRING "BUILD_VARIANT")
 set(WISH_BUILD_NUMBER 0 CACHE STRING "BUILD_NUMBER")
-set(WISH_BUILD_DATETIME ${CURRENT_BUILD_DATETIME} CACHE STRING "BUILD_DATETIME")
-set(WISH_BUILD_UUID 00000000-0000-0000-0000-000000000000 CACHE STRING "BUILD_DATETIME")
+set(WISH_BUILD_DATETIME "2000-01-01T00:00:00Z" CACHE STRING "BUILD_DATETIME")
+set(WISH_BUILD_UUID 00000000-0000-0000-0000-000000000000 CACHE STRING "BUILD_UUID")
 
 wish_create_executable(
-	TARGET sandbox_versions
-	OUTPUT_NAME versions
-	SOURCE main.cpp
-	CONFIGURE_SOURCE version.cpp.in
-	LINK versions::lib
+		TARGET sandbox_versions
+		OUTPUT_NAME versions
+		SOURCE *.cpp
+		CONFIGURE_SOURCE version.cpp.in
+		LINK versions::lib
+)
+
+wish_resource_mapping(
+		TARGET sandbox_versions
+		FILE_NAME wish/resource_path.hpp
+		FUNCTION_NAME wish::resource_path
+
+		GLOB res/*.lua
+		GLOB "${CMAKE_SOURCE_DIR}/res/*.lua"
+
+		REPLACE ../../ ""
+		REPLACE res/rename_me.lua res/file2.lua
+		REPLACE res/global_rename_me.lua res/global_file2.lua
+		REPLACE res/ target-res/
+)
+
+wish_package(
+		TARGET sandbox_versions
+		PACKAGE_DESTINATION package/versions
 )
