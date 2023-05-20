@@ -74,6 +74,7 @@ function(wish_resource_mapping)
 
 // std
 #include <filesystem>
+#include <string>
 #include <string_view>
 
 
@@ -86,16 +87,21 @@ void change_current_path(int argc, const wchar_t* const* argv);
 
 #if WISH_ENABLE_RESOURCE_MAPPING
 
+[[nodiscard]] std::string @FUNCTION_NAME@(std::string_view virtual_path);
 [[nodiscard]] std::string_view @FUNCTION_NAME@_sv(std::string_view virtual_path);
-[[nodiscard]] std::filesystem::path @FUNCTION_NAME@(std::string_view virtual_path);
+[[nodiscard]] std::filesystem::path @FUNCTION_NAME@_fs(std::string_view virtual_path);
 
 #else
+
+[[nodiscard]] inline std::string @FUNCTION_NAME@(std::string_view virtual_path) {
+	return std::string{virtual_path};
+}
 
 [[nodiscard]] constexpr inline std::string_view @FUNCTION_NAME@_sv(std::string_view virtual_path) {
 	return virtual_path;
 }
 
-[[nodiscard]] inline std::filesystem::path @FUNCTION_NAME@(std::string_view virtual_path) {
+[[nodiscard]] inline std::filesystem::path @FUNCTION_NAME@_fs(std::string_view virtual_path) {
 	return {virtual_path};
 }
 
@@ -127,6 +133,10 @@ void change_current_path(int argc, const wchar_t* const* argv);
 std::unordered_map<std::string_view, std::string_view> mapping{
 @mapping_string@};
 
+std::string @FUNCTION_NAME@(std::string_view virtual_path) {
+	return std::string{@FUNCTION_NAME@_sv(virtual_path)};
+}
+
 std::string_view @FUNCTION_NAME@_sv(std::string_view virtual_path) {
 	const auto it = mapping.find(virtual_path);
 	if (it != mapping.end())
@@ -135,7 +145,7 @@ std::string_view @FUNCTION_NAME@_sv(std::string_view virtual_path) {
 	throw std::runtime_error("Virtual path: \"" + std::string(virtual_path) + "\" is not found in resource mapping.");
 }
 
-std::filesystem::path @FUNCTION_NAME@(std::string_view virtual_path) {
+std::filesystem::path @FUNCTION_NAME@_fs(std::string_view virtual_path) {
 	return {@FUNCTION_NAME@_sv(virtual_path)};
 }
 
