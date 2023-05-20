@@ -47,7 +47,7 @@ function(wish_resource_mapping)
 		cmake_path(GET target_path FILENAME target_filename)
 		cmake_path(GET target_path PARENT_PATH target_dir)
 
-		install(FILES "${arg_RELATIVE}/${it_match}" DESTINATION "${target_dir}" RENAME "${target_filename}" COMPONENT ${arg_TARGET})
+		install(FILES "${arg_RELATIVE}/${it_match}" DESTINATION "./${target_dir}" RENAME "${target_filename}" COMPONENT ${arg_TARGET})
 	endforeach ()
 
 	# Build configure mapping string
@@ -159,7 +159,7 @@ void change_current_path(int argc, const char* const* argv) {
 
 	file(CONFIGURE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/__resource_mapping/${arg_FILE_NAME}" CONTENT "${mapping_source_code_hpp}" @ONLY)
 	file(CONFIGURE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/__resource_mapping/${arg_FILE_NAME}.cpp" CONTENT "${mapping_source_code_cpp}" @ONLY)
-	target_include_directories(sandbox_versions PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/__resource_mapping/")
+	target_include_directories(${arg_TARGET} PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/__resource_mapping/")
 	target_sources(${arg_TARGET} PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/__resource_mapping/${arg_FILE_NAME}.cpp")
 
 	# Debug
