@@ -21,7 +21,7 @@ wget https://raw.githubusercontent.com/VaderY/wish/master/cmake/wish.cmake -P cm
 Inside your root CMakeLists.txt file just set the version and include the primary script:
 TODO: More documentation
 ```
-set(WISH_REQUEST_VERSION v5.2.2)
+set(WISH_REQUEST_VERSION v5.3.0)
 include(cmake/wish.cmake)
 ```
 
@@ -32,36 +32,44 @@ include(cmake/wish.cmake)
 TODO: Format, place
 TODO: Auto self update the wish.cmake script
 
+- v5.3.0
+  - Feature: WISH_COMPILER_IS_<uppercase-compiler-id> are now set to TRUE or FALSE (WIN32, UNIX, APPLE, MSYS, MINGW, LINUX)
+  - Feature: WISH_SYSTEM_IS_<uppercase-system-id> are now set to TRUE or FALSE (MSVC, CLANG, GNU)
+  - Feature: WISH_SYSTEM is set to the most specific system name (MSYS > MINGW > LINUX > APPLE > WIN32 > UNIX)
+  - Feature: WISH_BUILD_TYPE_IS_<build-type> and WISH_BUILD_TYPE_IS_DEFAULT are now set by wish_configurations to TRUE or FALSE
+  - Feature: Add wish_enable_lto
+  - Improvement: WISH_ENABLED_LTO set to TRUE or FALSE
+  - Improvement: Additional warnings for not supported build types in wish_optimization_flags and wish_enable_lto
 - v5.2.2
   - Improvement: Add string variant for resource_path
 - v5.2.1
   - Fix: Handle empty wish_resource destination directory
   - Fix: Fix wish_resource hardcoded target name
 - v5.2.0
-  - New Feature: Add CONFIGURE_SOURCE for wish_create_executable, _library and _object functions
+  - Feature: Add CONFIGURE_SOURCE for wish_create_executable, _library and _object functions
   - Experimental: Implement wish_resource_mapping
   - Experimental: Implement wish_package
   - Improvement: Add OUTPUT_NAME support for wish_create_executable
 - v5.1.0
   - Fix: Resolve the error during first configure
 - v5.0.5
-  - New Feature: Add automated library alias naming
+  - Feature: Add automated library alias naming
   - Fix: Change lockfile placement to be ignored by git
 - v5.0.4
   - Improvement: Use a lockfile during wish install and update
 - v5.0.3
-  - New Feature: Add support for library aliases
+  - Feature: Add support for library aliases
   - Improvement: Make wish_group usage optional
 - v5.0.2
   - Improvement: Enable USES_TERMINAL_DOWNLOAD for externals
 - v5.0.0
-  - New Feature: Automated wish install and update
+  - Feature: Automated wish install and update
 - v4.2
-  - New Feature: Add wish_linker_flags
+  - Feature: Add wish_linker_flags
 - v4.1
   - Improvement: Fix double globbing during newly created generated files
 - v4.0
-  - Release: Initial release in this format (history)
+  - Release: Initial release in this format
 
 -----
 

@@ -112,7 +112,7 @@ TODO: Error message for: Requested Wish version is not a valid version identifie
 		list(GET DOWNLOAD_STATUS 1 ERROR_MESSAGE)
 		# Check if download was successful.
 		if(${STATUS_CODE} EQUAL 0)
-		  message(STATUS "Download completed successfully!")
+		  message(STATUS "Wish: Download completed successfully!")
 		else()
 		  # Exit CMake if the download failed, printing the error message.
 		  message(FATAL_ERROR "Error occurred during download: ${ERROR_MESSAGE}")

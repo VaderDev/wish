@@ -18,7 +18,7 @@ endfunction()
 
 function(wish_print_target_properties target)
 	if (NOT TARGET ${target})
-		message(STATUS "There is no target named '${target}'")
+		message(STATUS "Wish: There is no target named '${target}'")
 		return()
 	endif ()
 

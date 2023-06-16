@@ -22,11 +22,6 @@ macro(wish_disable_debug)
 	set(__wish_global_debug 0)
 endmacro()
 
-set(__wish_static_link_std)
-macro(wish_static_link_std)
-	set(__wish_static_link_std -static)
-endmacro()
-
 # --- Group ----------------------------------------------------------------------------------------
 
 set(__wish_current_group)
@@ -301,7 +296,7 @@ function(wish_create_executable)
 	list(REMOVE_DUPLICATES every_source)
 
 	add_executable(${arg_TARGET} ${every_source})
-	target_link_libraries(${arg_TARGET} ${arg_LINK} ${__wish_static_link_std})
+	target_link_libraries(${arg_TARGET} ${arg_LINK})
 	target_link_libraries(${arg_TARGET} ${obj})
 
 	# properties
@@ -395,10 +390,10 @@ function(wish_create_library)
 
 	if(arg_STATIC)
 		add_library(${arg_TARGET} STATIC ${every_source})
-		target_link_libraries(${arg_TARGET} ${arg_LINK} ${__wish_static_link_std})
+		target_link_libraries(${arg_TARGET} ${arg_LINK})
 	elseif(arg_SHARED)
 		add_library(${arg_TARGET} SHARED ${every_source})
-		target_link_libraries(${arg_TARGET} ${arg_LINK} ${__wish_static_link_std})
+		target_link_libraries(${arg_TARGET} ${arg_LINK})
 	elseif(arg_INTERFACE)
 		add_library(${arg_TARGET} INTERFACE ${every_source})
 		target_link_libraries(${arg_TARGET} INTERFACE ${arg_LINK})
