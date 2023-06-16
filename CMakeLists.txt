@@ -27,11 +27,14 @@ set(PATH_EXT_SRC ${CMAKE_SOURCE_DIR}/ext_src)
 
 # --- Options --------------------------------------------------------------------------------------
 
-option(FORCE_COLORED_OUTPUT "Always produce ANSI-colored output (GNU/Clang only)." FALSE)
-wish_force_colored_output(${FORCE_COLORED_OUTPUT})
+option(MY_PROJECT_ALTERNATIVE_LINKER "Use an alternative linker. Leave empty for system default; alternatives are 'gold', 'lld', 'bfd', 'mold'" "")
+wish_alternative_linker(${MY_PROJECT_ALTERNATIVE_LINKER})
 
-option(SKIP_EXTERNAL_CONFIGURES "Do not configure external projects only use the fake interface targets" FALSE)
-wish_skip_external_configures(${SKIP_EXTERNAL_CONFIGURES})
+option(MY_PROJECT_FORCE_COLORED_OUTPUT "Always produce ANSI-colored output (GNU/Clang only)." FALSE)
+wish_force_colored_output(${MY_PROJECT_FORCE_COLORED_OUTPUT})
+
+option(MY_PROJECT_SKIP_EXTERNAL_CONFIGURES "Do not configure external projects only use the fake interface targets" FALSE)
+wish_skip_external_configures(${MY_PROJECT_SKIP_EXTERNAL_CONFIGURES})
 
 # --- Flags ----------------------------------------------------------------------------------------
 

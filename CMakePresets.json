@@ -20,8 +20,9 @@
 			"binaryDir": "${sourceDir}/build/debug",
 			"cacheVariables": {
 				"CMAKE_BUILD_TYPE": "debug",
-				"SKIP_EXTERNAL_CONFIGURES": "true",
-				"FORCE_COLORED_OUTPUT": "true"
+				"MY_PROJECT_SKIP_EXTERNAL_CONFIGURES": "true",
+				"MY_PROJECT_FORCE_COLORED_OUTPUT": "true",
+				"MY_PROJECT_ALTERNATIVE_LINKER": "lld"
 			}
 		},
 		{
@@ -30,8 +31,9 @@
 			"binaryDir": "${sourceDir}/build/dev",
 			"cacheVariables": {
 				"CMAKE_BUILD_TYPE": "dev",
-				"SKIP_EXTERNAL_CONFIGURES": "true",
-				"FORCE_COLORED_OUTPUT": "true"
+				"MY_PROJECT_SKIP_EXTERNAL_CONFIGURES": "true",
+				"MY_PROJECT_FORCE_COLORED_OUTPUT": "true",
+				"MY_PROJECT_ALTERNATIVE_LINKER": "lld"
 			}
 		},
 		{
@@ -40,8 +42,8 @@
 			"binaryDir": "${sourceDir}/build/release",
 			"cacheVariables": {
 				"CMAKE_BUILD_TYPE": "release",
-				"SKIP_EXTERNAL_CONFIGURES": "false",
-				"FORCE_COLORED_OUTPUT": "true"
+				"MY_PROJECT_SKIP_EXTERNAL_CONFIGURES": "false",
+				"MY_PROJECT_FORCE_COLORED_OUTPUT": "true"
 			}
 		},
 		{
@@ -50,8 +52,8 @@
 			"binaryDir": "${sourceDir}/build/package",
 			"cacheVariables": {
 				"CMAKE_BUILD_TYPE": "package",
-				"SKIP_EXTERNAL_CONFIGURES": "true",
-				"FORCE_COLORED_OUTPUT": "true"
+				"MY_PROJECT_SKIP_EXTERNAL_CONFIGURES": "true",
+				"MY_PROJECT_FORCE_COLORED_OUTPUT": "true"
 			}
 		}
 	]

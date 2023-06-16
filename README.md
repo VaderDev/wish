@@ -21,7 +21,7 @@ wget https://raw.githubusercontent.com/VaderY/wish/master/cmake/wish.cmake -P cm
 Inside your root CMakeLists.txt file just set the version and include the primary script:
 TODO: More documentation
 ```
-set(WISH_REQUEST_VERSION v5.3.0)
+set(WISH_REQUEST_VERSION v5.3.1)
 include(cmake/wish.cmake)
 ```
 
@@ -32,6 +32,8 @@ include(cmake/wish.cmake)
 TODO: Format, place
 TODO: Auto self update the wish.cmake script (not just the wish/ folder)
 
+- v5.3.1
+  - Fix detection of default linker in wish_alternative_linker
 - v5.3.0
   - Feature: Add wish_alternative_linker to use an alternative linker
   - Feature: Add wish_enable_lto

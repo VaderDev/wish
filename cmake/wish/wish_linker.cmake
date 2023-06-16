@@ -8,7 +8,7 @@ include(cmake/wish/wish_platform.cmake)
 # -------------------------------------------------------------------------------------------------
 
 function(wish_alternative_linker linker_name)
-	if ("${linker_name}" STREQUAL "")
+	if (NOT linker_name)
 		return()
 	endif ()
 
