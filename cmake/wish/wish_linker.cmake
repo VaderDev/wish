@@ -2,24 +2,25 @@
 
 include_guard(GLOBAL)
 
-#set(CMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fuse-ld=mold")
+include(cmake/wish/wish_platform.cmake)
 
-function(__wish_set_alternate_linker linker)
-	find_program(LINKER_EXECUTABLE ld.${USE_ALTERNATE_LINKER} ${USE_ALTERNATE_LINKER})
-	if (LINKER_EXECUTABLE)
+
+# -------------------------------------------------------------------------------------------------
+
+function(wish_alternative_linker linker_name)
+	if ("${linker_name}" STREQUAL "")
+		return()
+	endif ()
+
+	find_program(linker_executable ld.${linker_name} ${linker_name})
+	if (linker_executable)
 		if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" AND "${CMAKE_CXX_COMPILER_VERSION}" VERSION_LESS 12.0.0)
-			add_link_options("-ld-path=${USE_ALTERNATE_LINKER}")
+			add_link_options("-ld-path=${linker_name}")
 		else ()
-			add_link_options("-fuse-ld=${USE_ALTERNATE_LINKER}")
+			add_link_options("-fuse-ld=${linker_name}")
 		endif ()
-		message(STATUS "Wish: Enable linker: ${USE_ALTERNATE_LINKER}")
+		message(STATUS "Wish: Enabled alternative linker: ${linker_name}")
 	else ()
-		message(FATAL_ERROR "Could not enable linker: ${USE_ALTERNATE_LINKER} - could not find program")
-		#		set(USE_ALTERNATE_LINKER "" CACHE STRING "Use alternate linker" FORCE)
+		message(FATAL_ERROR "Wish: Could not enable alternative linker: ${linker_name} program was not found")
 	endif ()
 endfunction()
-
-set(USE_ALTERNATE_LINKER "" CACHE STRING "Use alternate linker. Leave empty for system default; alternatives are 'gold', 'lld', 'bfd', 'mold'")
-if (NOT "${USE_ALTERNATE_LINKER}" STREQUAL "")
-	__wish_set_alternate_linker(${USE_ALTERNATE_LINKER})
-endif ()

@@ -105,6 +105,8 @@ endfunction()
 
 # -------------------------------------------------------------------------------------------------
 
+set(WISH_ENABLED_LTO FALSE)
+
 macro(wish_enable_lto)
 	if (WISH_COMPILER_IS_GNU)
 		add_compile_options(-flto)
@@ -112,7 +114,6 @@ macro(wish_enable_lto)
 		set(CMAKE_NM "gcc-nm")
 		set(CMAKE_RANLIB "gcc-ranlib")
 	else ()
-		set(WISH_ENABLED_LTO FALSE)
 		message(WARNING "Wish: LTO Support for ${WISH_COMPILER} is not yet implemented.")
 		return()
 	endif ()

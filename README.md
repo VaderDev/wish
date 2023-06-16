@@ -30,14 +30,15 @@ include(cmake/wish.cmake)
 #### Release notes
 
 TODO: Format, place
-TODO: Auto self update the wish.cmake script
+TODO: Auto self update the wish.cmake script (not just the wish/ folder)
 
 - v5.3.0
-  - Feature: WISH_COMPILER_IS_<uppercase-compiler-id> are now set to TRUE or FALSE (WIN32, UNIX, APPLE, MSYS, MINGW, LINUX)
-  - Feature: WISH_SYSTEM_IS_<uppercase-system-id> are now set to TRUE or FALSE (MSVC, CLANG, GNU)
-  - Feature: WISH_SYSTEM is set to the most specific system name (MSYS > MINGW > LINUX > APPLE > WIN32 > UNIX)
-  - Feature: WISH_BUILD_TYPE_IS_<build-type> and WISH_BUILD_TYPE_IS_DEFAULT are now set by wish_configurations to TRUE or FALSE
+  - Feature: Add wish_alternative_linker to use an alternative linker
   - Feature: Add wish_enable_lto
+  - Feature: Add WISH_COMPILER_IS_<uppercase-compiler-id> as TRUE or FALSE (WIN32, UNIX, APPLE, MSYS, MINGW, LINUX)
+  - Feature: Add WISH_SYSTEM_IS_<uppercase-system-id> as TRUE or FALSE (MSVC, CLANG, GNU)
+  - Feature: Add WISH_SYSTEM as the most specific system name (MSYS > MINGW > LINUX > APPLE > WIN32 > UNIX)
+  - Feature: Add WISH_BUILD_TYPE_IS_<build-type> and WISH_BUILD_TYPE_IS_DEFAULT and set by wish_configurations to TRUE or FALSE
   - Improvement: WISH_ENABLED_LTO set to TRUE or FALSE
   - Improvement: Additional warnings for not supported build types in wish_optimization_flags and wish_enable_lto
 - v5.2.2
@@ -91,13 +92,22 @@ wish_configurations(DEFAULT <default mode> <other modes>...)
 wish_configurations(DEFAULT Release Dev Debug)
 ```
 
+wish_alternative_linker
+```
+wish_alternative_linker(<string>)
+
+# Example
+option(MY_PROJECT_ALTERNATIVE_LINKER "Use an alternative linker. Leave empty for system default; alternatives are 'gold', 'lld', 'bfd', 'mold'" "")
+wish_alternative_linker(${MY_PROJECT_ALTERNATIVE_LINKER})
+```
+
 wish_force_colored_output
 ```
 wish_force_colored_output(<bool>)
 
 # Example
-option(FORCE_COLORED_OUTPUT "Always produce ANSI-colored output (GNU/Clang only)." FALSE)
-wish_force_colored_output(${FORCE_COLORED_OUTPUT})
+option(MY_PROJECT_FORCE_COLORED_OUTPUT "Always produce ANSI-colored output (GNU/Clang only)." FALSE)
+wish_force_colored_output(${MY_PROJECT_FORCE_COLORED_OUTPUT})
 ```
 
 wish_skip_external_configures
@@ -105,8 +115,8 @@ wish_skip_external_configures
 wish_skip_external_configures(<bool>)
 
 # Example
-option(SKIP_EXTERNAL_CONFIGURES "Do not configure external projects only use the fake interface targets" FALSE)
-wish_skip_external_configures(${SKIP_EXTERNAL_CONFIGURES})
+option(MY_PROJECT_SKIP_EXTERNAL_CONFIGURES "Do not configure external projects only use the fake interface targets" FALSE)
+wish_skip_external_configures(${MY_PROJECT_SKIP_EXTERNAL_CONFIGURES})
 ```
 
 wish_warning
@@ -147,6 +157,22 @@ wish_linker_flags(
 wish_optimization_flags
 ```
 wish_optimization_flags()
+```
+
+TODO: Reference documentation format for variables
+
+WISH_BUILD_TYPE_IS_<build-type>: bool
+WISH_BUILD_TYPE_IS_DEFAULT: bool
+WISH_COMPILER_IS_<uppercase-compiler-id>: bool (WIN32, UNIX, APPLE, MSYS, MINGW, LINUX)
+WISH_SYSTEM_IS_<uppercase-system-id>: bool
+WISH_SYSTEM: string: contains the most specific system name (MSYS > MINGW > LINUX > APPLE > WIN32 > UNIX)
+
+wish_enable_lto
+```
+wish_enable_lto()
+
+# Example
+wish_enable_lto()
 ```
 
 wish_group
