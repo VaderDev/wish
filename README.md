@@ -21,7 +21,7 @@ wget https://raw.githubusercontent.com/VaderY/wish/master/cmake/wish.cmake -P cm
 Inside your root CMakeLists.txt file just set the version and include the primary script:
 TODO: More documentation
 ```
-set(WISH_REQUEST_VERSION v5.3.2)
+set(WISH_REQUEST_VERSION v5.3.3)
 include(cmake/wish.cmake)
 ```
 
@@ -32,11 +32,13 @@ include(cmake/wish.cmake)
 TODO: Format, place
 TODO: Auto self update the wish.cmake script (not just the wish/ folder)
 
+- v5.3.3
+  - Fix: Fix wish_group alias names
 - v5.3.2
   - Rename: wish_enable_lto is now wish_enable_ipo to match cmake terminology
   - Improvement: Improve wish_enable_ipo to use built in CMake support
 - v5.3.1
-  - Fix detection of default linker in wish_alternative_linker
+  - Fix: Fix detection of default linker in wish_alternative_linker
 - v5.3.0
   - Feature: Add wish_alternative_linker to use an alternative linker
   - Feature: Add wish_enable_lto
@@ -129,7 +131,7 @@ wish_enable_ipo
 wish_enable_ipo(<boolean>)
 
 # Example
-option(MY_PROJECT_ENABLE_IPO "Enable (LTO) interprocedural optimization" FALSE)
+option(MY_PROJECT_ENABLE_IPO "Enable interprocedural optimization (LTO)" FALSE)
 wish_enable_ipo(${MY_PROJECT_ENABLE_IPO})
 ```
 

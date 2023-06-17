@@ -35,7 +35,7 @@ macro(wish_group name)
 	set(__wish_group_${name})
 
 	add_custom_target(${name})
-	foreach(alias IN LISTS ARGN)
+	foreach(alias IN ITEMS ${ARGN})
 		add_custom_target(${alias} DEPENDS ${name})
 	endforeach()
 endmacro()
