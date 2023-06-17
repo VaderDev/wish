@@ -21,7 +21,7 @@ wget https://raw.githubusercontent.com/VaderY/wish/master/cmake/wish.cmake -P cm
 Inside your root CMakeLists.txt file just set the version and include the primary script:
 TODO: More documentation
 ```
-set(WISH_REQUEST_VERSION v5.3.1)
+set(WISH_REQUEST_VERSION v5.3.2)
 include(cmake/wish.cmake)
 ```
 
@@ -32,6 +32,9 @@ include(cmake/wish.cmake)
 TODO: Format, place
 TODO: Auto self update the wish.cmake script (not just the wish/ folder)
 
+- v5.3.2
+  - Rename: wish_enable_lto is now wish_enable_ipo to match cmake terminology
+  - Improvement: Improve wish_enable_ipo to use built in CMake support
 - v5.3.1
   - Fix detection of default linker in wish_alternative_linker
 - v5.3.0
@@ -94,15 +97,6 @@ wish_configurations(DEFAULT <default mode> <other modes>...)
 wish_configurations(DEFAULT Release Dev Debug)
 ```
 
-wish_alternative_linker
-```
-wish_alternative_linker(<string>)
-
-# Example
-option(MY_PROJECT_ALTERNATIVE_LINKER "Use an alternative linker. Leave empty for system default; alternatives are 'gold', 'lld', 'bfd', 'mold'" "")
-wish_alternative_linker(${MY_PROJECT_ALTERNATIVE_LINKER})
-```
-
 wish_force_colored_output
 ```
 wish_force_colored_output(<bool>)
@@ -119,6 +113,24 @@ wish_skip_external_configures(<bool>)
 # Example
 option(MY_PROJECT_SKIP_EXTERNAL_CONFIGURES "Do not configure external projects only use the fake interface targets" FALSE)
 wish_skip_external_configures(${MY_PROJECT_SKIP_EXTERNAL_CONFIGURES})
+```
+
+wish_alternative_linker
+```
+wish_alternative_linker(<string>)
+
+# Example
+option(MY_PROJECT_ALTERNATIVE_LINKER "Use an alternative linker. Leave empty for system default; alternatives are 'gold', 'lld', 'bfd', 'mold'" FALSE)
+wish_alternative_linker(${MY_PROJECT_ALTERNATIVE_LINKER})
+```
+
+wish_enable_ipo
+```
+wish_enable_ipo(<boolean>)
+
+# Example
+option(MY_PROJECT_ENABLE_IPO "Enable (LTO) interprocedural optimization" FALSE)
+wish_enable_ipo(${MY_PROJECT_ENABLE_IPO})
 ```
 
 wish_warning
@@ -168,14 +180,6 @@ WISH_BUILD_TYPE_IS_DEFAULT: bool
 WISH_COMPILER_IS_<uppercase-compiler-id>: bool (WIN32, UNIX, APPLE, MSYS, MINGW, LINUX)
 WISH_SYSTEM_IS_<uppercase-system-id>: bool
 WISH_SYSTEM: string: contains the most specific system name (MSYS > MINGW > LINUX > APPLE > WIN32 > UNIX)
-
-wish_enable_lto
-```
-wish_enable_lto()
-
-# Example
-wish_enable_lto()
-```
 
 wish_group
 ```

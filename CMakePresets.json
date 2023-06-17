@@ -43,7 +43,8 @@
 			"cacheVariables": {
 				"CMAKE_BUILD_TYPE": "release",
 				"MY_PROJECT_SKIP_EXTERNAL_CONFIGURES": "false",
-				"MY_PROJECT_FORCE_COLORED_OUTPUT": "true"
+				"MY_PROJECT_FORCE_COLORED_OUTPUT": "true",
+				"MY_PROJECT_ENABLE_IPO": "true"
 			}
 		},
 		{
@@ -53,7 +54,8 @@
 			"cacheVariables": {
 				"CMAKE_BUILD_TYPE": "package",
 				"MY_PROJECT_SKIP_EXTERNAL_CONFIGURES": "true",
-				"MY_PROJECT_FORCE_COLORED_OUTPUT": "true"
+				"MY_PROJECT_FORCE_COLORED_OUTPUT": "true",
+				"MY_PROJECT_ENABLE_IPO": "true"
 			}
 		}
 	]

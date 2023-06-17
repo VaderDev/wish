@@ -105,25 +105,6 @@ endfunction()
 
 # -------------------------------------------------------------------------------------------------
 
-set(WISH_ENABLED_LTO FALSE)
-
-macro(wish_enable_lto)
-	if (WISH_COMPILER_IS_GNU)
-		add_compile_options(-flto)
-		set(CMAKE_AR "gcc-ar")
-		set(CMAKE_NM "gcc-nm")
-		set(CMAKE_RANLIB "gcc-ranlib")
-	else ()
-		message(WARNING "Wish: LTO Support for ${WISH_COMPILER} is not yet implemented.")
-		return()
-	endif ()
-
-	set(WISH_ENABLED_LTO TRUE)
-	message(STATUS "Wish: Enabled LTO: ${WISH_COMPILER}")
-endmacro()
-
-# -------------------------------------------------------------------------------------------------
-
 macro(wish_optimization_flags)
 	wish_compiler_flags(
 			debug GNU -Og
@@ -141,9 +122,6 @@ macro(wish_optimization_flags)
 			release GNU -static
 			package GNU -static
 	)
-	if (WISH_BUILD_TYPE_IS_release OR WISH_BUILD_TYPE_IS_package)
-		wish_enable_lto()
-	endif ()
 
 	set(supported_compilers GNU)
 	set(supported_build_types debug dev release package)
