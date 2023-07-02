@@ -29,7 +29,7 @@ wish_resource_mapping(
 
 		RESOURCE res/*.lua
 		RESOURCE "${CMAKE_SOURCE_DIR}/res/*.lua"
-		RESOURCE /res_at/*.lua
+		RESOURCE @/res_at/*.lua
 
 		MAPPING ../../res/global_ res/global_
 		MAPPING res/rename_me.lua res/file2.lua

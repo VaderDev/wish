@@ -2,7 +2,7 @@
 
 include_guard(GLOBAL)
 
-# RESOURCE paths starting with / will be interpreted as relative to CMAKE_SOURCE_DIR
+# RESOURCE paths starting with @ and @/ will be interpreted as relative to CMAKE_SOURCE_DIR
 function(wish_resource_mapping)
 	cmake_parse_arguments(PARSE_ARGV 0 arg "DEBUG" "TARGET;MAPPING_FILE;MAPPING_FUNCTION;RELATIVE" "RESOURCE;MAPPING")
 
@@ -20,16 +20,18 @@ function(wish_resource_mapping)
 	endif ()
 
 	# GLOB
-	# Remap / to relative to CMAKE_SOURCE_DIR
+	# Remap @/ and @ to relative to CMAKE_SOURCE_DIR
 	set(arg_RESOURCE_root ${arg_RESOURCE})
-	list(FILTER arg_RESOURCE_root INCLUDE REGEX "^/")
-	list(FILTER arg_RESOURCE EXCLUDE REGEX "^/")
+	list(FILTER arg_RESOURCE_root INCLUDE REGEX "^@")
+	list(FILTER arg_RESOURCE EXCLUDE REGEX "^@")
 	file(GLOB_RECURSE physical_files LIST_DIRECTORIES false RELATIVE "${arg_RELATIVE}" CONFIGURE_DEPENDS ${arg_RESOURCE})
 	set(virtual_files ${physical_files})
 
 	foreach (resource IN LISTS arg_RESOURCE_root)
-		file(GLOB_RECURSE matching_physical LIST_DIRECTORIES false RELATIVE "${arg_RELATIVE}" CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}${resource}")
-		file(GLOB_RECURSE matching_virtual LIST_DIRECTORIES false RELATIVE "${CMAKE_SOURCE_DIR}" CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}${resource}")
+		string(REPLACE @/ "" resource "${resource}")
+		string(REPLACE @ "" resource "${resource}")
+		file(GLOB_RECURSE matching_physical LIST_DIRECTORIES false RELATIVE "${arg_RELATIVE}" CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/${resource}")
+		file(GLOB_RECURSE matching_virtual LIST_DIRECTORIES false RELATIVE "${CMAKE_SOURCE_DIR}" CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/${resource}")
 		list(APPEND physical_files ${matching_physical})
 		list(APPEND virtual_files ${matching_virtual})
 	endforeach ()

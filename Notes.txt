@@ -27,6 +27,9 @@ place.it:
 
 
 
+document wish_resource_mapping
+example wish_resource_mapping
+
 
 
 runtime stuffy
