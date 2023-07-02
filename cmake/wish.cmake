@@ -2,7 +2,7 @@
 if (NOT DEFINED WISH_REQUEST_VERSION)
 	message(FATAL_ERROR "Wish: WISH_REQUEST_VERSION is not defined\n"
 			"  Usage:\n"
-			"    set(WISH_REQUEST_VERSION v5.3.3)\n"
+			"    set(WISH_REQUEST_VERSION v5.4.0)\n"
 			"    include(cmake/wish.cmake)\n")
 endif ()
 

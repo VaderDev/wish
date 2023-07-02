@@ -24,16 +24,19 @@ wish_create_executable(
 
 wish_resource_mapping(
 		TARGET sandbox_versions
-		FILE_NAME wish/resource_path.hpp
-		FUNCTION_NAME wish::resource_path
+		MAPPING_FILE wish/resource_path.hpp
+		MAPPING_FUNCTION wish::resource_mappings
 
-		GLOB res/*.lua
-		GLOB "${CMAKE_SOURCE_DIR}/res/*.lua"
+		RESOURCE res/*.lua
+		RESOURCE "${CMAKE_SOURCE_DIR}/res/*.lua"
+		RESOURCE /res_at/*.lua
 
-		REPLACE ../../ ""
-		REPLACE res/rename_me.lua res/file2.lua
-		REPLACE res/global_rename_me.lua res/global_file2.lua
-		REPLACE res/ target-res/
+		MAPPING ../../res/global_ res/global_
+		MAPPING res/rename_me.lua res/file2.lua
+		MAPPING res/global_rename_me.lua res/global_file2.lua
+		MAPPING res_at/at_rename_me.lua res_at/at_file2.lua
+		MAPPING res/ target-res/
+		MAPPING res_at/ target-res/
 )
 
 wish_package(

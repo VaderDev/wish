@@ -21,7 +21,7 @@ wget https://raw.githubusercontent.com/VaderY/wish/master/cmake/wish.cmake -P cm
 Inside your root CMakeLists.txt file just set the version and include the primary script:
 TODO: More documentation
 ```
-set(WISH_REQUEST_VERSION v5.3.3)
+set(WISH_REQUEST_VERSION v5.4.0)
 include(cmake/wish.cmake)
 ```
 
@@ -32,6 +32,14 @@ include(cmake/wish.cmake)
 TODO: Format, place
 TODO: Auto self update the wish.cmake script (not just the wish/ folder)
 
+- v5.4.0
+  - Change: Modify wish_resource_mapping expose the resource file mapping instead of the mapping function
+  - Rename wish_resource_mapping arguments:
+      FILE_NAME to MAPPING_FILE,
+      FUNCTION_NAME to MAPPING_FUNCTION,
+      GLOB to RESOURCE,
+      REPLACE to MAPPING
+  - Improvement: Add relative to CMAKE_SOURCE_DIR path support for wish_resource_mapping by starting the patch with '/'
 - v5.3.3
   - Fix: Fix wish_group alias names
 - v5.3.2
