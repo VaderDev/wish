@@ -24,7 +24,11 @@ function(wish_resource_mapping)
 	set(arg_RESOURCE_root ${arg_RESOURCE})
 	list(FILTER arg_RESOURCE_root INCLUDE REGEX "^@")
 	list(FILTER arg_RESOURCE EXCLUDE REGEX "^@")
-	file(GLOB_RECURSE physical_files LIST_DIRECTORIES false RELATIVE "${arg_RELATIVE}" CONFIGURE_DEPENDS ${arg_RESOURCE})
+	if (arg_RESOURCE)
+		file(GLOB_RECURSE physical_files LIST_DIRECTORIES false RELATIVE "${arg_RELATIVE}" CONFIGURE_DEPENDS ${arg_RESOURCE})
+	else ()
+		set(physical_files)
+	endif ()
 	set(virtual_files ${physical_files})
 
 	foreach (resource IN LISTS arg_RESOURCE_root)
@@ -70,6 +74,14 @@ function(wish_resource_mapping)
 	foreach (it_match it_target IN ZIP_LISTS physical_files logical_files)
 		set(mapping_string "${mapping_string}\t\t{\"${it_target}\", \"${it_match}\"},\n")
 	endforeach ()
+
+	if(mapping_string)
+		set(mapping_span "mapping_array")
+	else ()
+		# Special case to stop empty array errors
+		set(mapping_string "${mapping_string}\t\t{\"\", \"\"},\n")
+		set(mapping_span "{}")
+	endif ()
 
 	# Generate resource mapping source files
 	string(REGEX MATCH "([^:]+)$" MAPPING_FUNCTION "${arg_MAPPING_FUNCTION}")
@@ -138,7 +150,7 @@ static std::pair<std::string_view, std::string_view> mapping_array[]{
 @mapping_string@};
 
 std::span<std::pair<std::string_view, std::string_view>> @MAPPING_FUNCTION@() {
-	return mapping_array;
+	return @mapping_span@;
 }
 
 #endif
