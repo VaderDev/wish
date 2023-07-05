@@ -172,17 +172,27 @@ endfunction()
 # --- Generate ------------------------------------------------------------------------------------
 
 set(__wish_generators "")
+# __wish_generator_depends_${generator_name} stores additional DEPENDS for the generator custom command
 # __wish_generator_command_${generator_name} stores the generator commands
 # __wish_generator_output_rules_${generator_name} stores the generator input -> outputs rewrite rules
 
 function(wish_generator)
-	cmake_parse_arguments(PARSE_ARGV 0 arg "" "TARGET;COMMAND" "")
+	# TODO P2: Improve PLUGIN support, currently only a single glob expression can be specified
+	#			due to the limitations of the OUTPUT rule parsing
+	cmake_parse_arguments(PARSE_ARGV 0 arg "" "TARGET;COMMAND;PLUGIN" "")
 
 	set(temp_list ${__wish_generators})
 	list(APPEND temp_list ${arg_TARGET})
 	set(__wish_generators ${temp_list} PARENT_SCOPE)
 
+	# Command
 	set(__wish_generator_command_${arg_TARGET} ${arg_COMMAND} PARENT_SCOPE)
+
+	# Depends
+	if (arg_PLUGIN)
+		file(GLOB_RECURSE plugin_files LIST_DIRECTORIES false CONFIGURE_DEPENDS ${arg_PLUGIN})
+		set(__wish_generator_depends_${arg_TARGET} ${plugin_files} PARENT_SCOPE)
+	endif ()
 
 	# Have to hand parse outputs, as list of list as argument is not yet supported...
 	set(output_rules ${arg_UNPARSED_ARGUMENTS})
@@ -251,7 +261,7 @@ function(__wish_generate out_generated_outputs)
 			add_custom_command(
 					OUTPUT  ${output_files_abs}
 					COMMAND ${__wish_generator_command_${generator}} ${matching_file} ${output_files_rel}
-					DEPENDS ${generator} ${matching_file}
+					DEPENDS ${generator} ${matching_file} ${__wish_generator_depends_${generator}}
 					WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 			)
 
