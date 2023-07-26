@@ -12,6 +12,15 @@ pacman -S mingw64/mingw-w64-x86_64-lld
 
 
 
+
+wish: cmake LIBV_SYSTEM_HEADERS: include directories that are libv specific should be marked with SYSTEM
+wish: cmake LIBV_WERROR: add WERROR to compiler options
+
+
+
+
+
+
 place.it:
 	New C++ Defines for executables:
 		WISH_BUILD_PACKAGE

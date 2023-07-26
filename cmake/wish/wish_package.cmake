@@ -22,11 +22,13 @@ function(wish_package)
 		COMPONENT ${arg_TARGET}
 	)
 
-	# Convenience package_<target> wrapped to package the given install component
-	add_custom_target(package_${arg_TARGET}
-		DEPENDS ${arg_TARGET}
-		COMMAND ${CMAKE_COMMAND} --install ${CMAKE_BINARY_DIR} --prefix ${CMAKE_SOURCE_DIR}/${arg_PACKAGE_DESTINATION} --component ${arg_TARGET}
-	)
+	if (WISH_BUILD_TYPE_IS_PACKAGE)
+		# Convenience package_<target> wrapped to package the given install component
+		add_custom_target(package_${arg_TARGET}
+			DEPENDS ${arg_TARGET}
+			COMMAND ${CMAKE_COMMAND} --install ${CMAKE_BINARY_DIR} --prefix ${CMAKE_SOURCE_DIR}/${arg_PACKAGE_DESTINATION} --component ${arg_TARGET}
+		)
+	endif()
 endfunction()
 
 # -------------------------------------------------------------------------------------------------
