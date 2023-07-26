@@ -33,6 +33,8 @@ int main(int argc, char** argv) {
 
 	wish::change_current_path(argc, argv);
 
+	int i = 0;
+
 	foo();
 	std::cout << "argv[0]: " << argv[0] << std::endl;
 	std::cout << "version_number: " << build.version_number << std::endl;

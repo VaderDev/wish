@@ -33,6 +33,7 @@ TODO: Format, place
 TODO: Auto self update the wish.cmake script (not just the wish/ folder)
 
 - v5.4.4
+  - Feature: Add wish_werror
   - Improvement: Hide package_* target for non-package build types
 - v5.4.3
   - Improvement: Add PLUGIN support for wish_generator
@@ -112,7 +113,7 @@ wish_configurations
 wish_configurations(DEFAULT <default mode> <other modes>...)
 
 # Example
-wish_configurations(DEFAULT Release Dev Debug)
+wish_configurations(debug dev DEFAULT release package)
 ```
 
 wish_force_colored_output
@@ -131,6 +132,15 @@ wish_skip_external_configures(<bool>)
 # Example
 option(MY_PROJECT_SKIP_EXTERNAL_CONFIGURES "Do not configure external projects only use the fake interface targets" FALSE)
 wish_skip_external_configures(${MY_PROJECT_SKIP_EXTERNAL_CONFIGURES})
+```
+
+wish_werror
+```
+wish_werror(<bool>)
+
+# Example
+option(MY_PROJECT_WERROR "Specify whether to treat warnings on compile as errors." FALSE)
+wish_werror(${MY_PROJECT_WERROR})
 ```
 
 wish_alternative_linker

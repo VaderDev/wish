@@ -135,3 +135,17 @@ macro(wish_optimization_flags)
 endmacro()
 
 # -------------------------------------------------------------------------------------------------
+
+function(wish_werror enable)
+	# It seams like there is an issue with CMAKE_COMPILE_WARNING_AS_ERROR, use the flags for now
+	#	set(CMAKE_COMPILE_WARNING_AS_ERROR ${enable})
+	if (enable)
+		wish_compiler_flags(
+				MSVC /Wx
+				Clang -Werror
+				GNU -Werror
+		)
+	endif ()
+endfunction()
+
+# -------------------------------------------------------------------------------------------------
