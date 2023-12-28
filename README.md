@@ -21,7 +21,7 @@ wget https://raw.githubusercontent.com/VaderY/wish/master/cmake/wish.cmake -P cm
 Inside your root CMakeLists.txt file just set the version and include the primary script:
 TODO: More documentation
 ```
-set(WISH_REQUEST_VERSION v5.4.4)
+set(WISH_REQUEST_VERSION v5.5.0)
 include(cmake/wish.cmake)
 ```
 
@@ -32,6 +32,8 @@ include(cmake/wish.cmake)
 TODO: Format, place
 TODO: Auto self update the wish.cmake script (not just the wish/ folder)
 
+- v5.5.0
+  - Improvement: Disable optimization for 'debug' build type and create a new 'optdebug' build type with it
 - v5.4.4
   - Feature: Add wish_werror
   - Improvement: Hide package_* target for non-package build types

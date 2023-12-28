@@ -107,8 +107,10 @@ endfunction()
 
 macro(wish_optimization_flags)
 	wish_compiler_flags(
-			debug GNU -Og
 			debug GNU -ggdb3
+
+			optdebug GNU -Og
+			optdebug GNU -ggdb3
 
 			dev GNU -O3
 
@@ -124,7 +126,7 @@ macro(wish_optimization_flags)
 	)
 
 	set(supported_compilers GNU)
-	set(supported_build_types debug dev release package)
+	set(supported_build_types debug optdebug dev release package)
 
 	if (NOT WISH_COMPILER IN_LIST supported_compilers)
 		message(WARNING "Wish: Default optimization flags for \"${WISH_COMPILER}\" is not implemented.")

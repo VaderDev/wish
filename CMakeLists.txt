@@ -10,7 +10,7 @@ include(cmake/wish/wish_core.cmake)
 
 # --------------------------------------------------------------------------------------------------
 
-wish_configurations(debug dev DEFAULT release package)
+wish_configurations(debug optdebug dev DEFAULT release package)
 
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 message(STATUS "Processor count: ${WISH_PROCESSOR_COUNT}")
@@ -38,6 +38,9 @@ wish_alternative_linker(${MY_PROJECT_ALTERNATIVE_LINKER})
 
 option(MY_PROJECT_ENABLE_IPO "Enable (LTO) interprocedural optimization" FALSE)
 wish_enable_ipo(${MY_PROJECT_ENABLE_IPO})
+
+option(MY_PROJECT_WERROR "Specify whether to treat warnings on compile as errors." FALSE)
+wish_werror(${MY_PROJECT_WERROR})
 
 # --- Flags ----------------------------------------------------------------------------------------
 

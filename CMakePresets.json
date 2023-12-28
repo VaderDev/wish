@@ -26,6 +26,17 @@
 			}
 		},
 		{
+			"name": "gcc-optdebug",
+			"inherits": "gcc-base",
+			"binaryDir": "${sourceDir}/build/optdebug",
+			"cacheVariables": {
+				"CMAKE_BUILD_TYPE": "optdebug",
+				"MY_PROJECT_SKIP_EXTERNAL_CONFIGURES": "true",
+				"MY_PROJECT_FORCE_COLORED_OUTPUT": "true",
+				"MY_PROJECT_ALTERNATIVE_LINKER": "lld"
+			}
+		},
+		{
 			"name": "gcc-dev",
 			"inherits": "gcc-base",
 			"binaryDir": "${sourceDir}/build/dev",

@@ -11,10 +11,11 @@ pacman -S mingw64/mingw-w64-x86_64-lld
 
 
 
+wish: auto call ext target upon any change
+wish: solve wish skip external configure
 
 
 wish: cmake LIBV_SYSTEM_HEADERS: include directories that are libv specific should be marked with SYSTEM
-wish: cmake LIBV_WERROR: add WERROR to compiler options
 
 
 
@@ -160,3 +161,257 @@ CppNow 2021: CMake: One Tool To Build Them All - Bill Hoffman: https://www.youtu
 CppCon 2019: Deep CMake for Library Authors - Craig Scott https://www.youtube.com/watch?v=m0DwB4OvDXk
 C++Now 2017: Effective CMake - Daniel Pfeifer: https://www.youtube.com/watch?v=bsXLMQ6WgIk
 
+
+
+--- Ideas ---------------------------------------------------------------------------------------
+
+Additional cmake.wish ideas:
+
+wish_config(
+	TARGET                      __PARENT_TARGET_____TARGET__
+	FOLDER                      __PARENT_FOLDER__/__TARGET__
+	ALIAS                       __PARENT_ALIAS__::__TARGET__
+	SOURCE                      src/__FOLDER__/*.cpp
+	HEADER                      src/__FOLDER__/*.hpp
+
+	RESULT_PATH_BINARY_APP      bin/__FOLDER__/
+	RESULT_PATH_BINARY_EXAMPLE  bin/__FOLDER__/
+	RESULT_PATH_BINARY_SANDBOX  bin/__FOLDER__/
+	RESULT_PATH_BINARY_TEST     bin/__FOLDER__/
+	RESULT_PATH_HEADER          include/__FOLDER__/
+	RESULT_PATH_LIBRARY_DYNAMIC lib/__FOLDER__/
+	RESULT_PATH_LIBRARY_STATIC  lib/__FOLDER__/
+)
+
+string(LENGTH ${CMAKE_SOURCE_DIR}_ WISH_SHORT_PATH_CUTOFF)
+set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+
+find_package(Threads REQUIRED)
+find_package(OpenGL REQUIRED)
+
+wish_create_base(
+	TARGET libv
+
+	WARNING GNU VERSION_GREATER 7.0 -Wduplicated-branches
+	WARNING GNU VERSION_GREATER 7.0 -Wrestrict
+	WARNING GNU VERSION_GREATER 7.0 -Wshadow-compatible-local
+	WARNING GNU VERSION_GREATER 8.0 -Wcast-align=strict
+	WARNING GNU VERSION_GREATER 8.0 -Wmultistatement-macros
+
+	OPTION DEBUG -Og
+	OPTION DEBUG -ggdb3
+	OPTION RELEASE -O3
+	OPTION RELEASE -static
+	OPTION DEV -O3
+	OPTION -m64
+	OPTION -std=c++2a
+	OPTION -fconcepts
+
+	DEFINE -Dconcept="concept bool"
+	DEFINE -D "WISH_REQUIRES\\(...\\)=\"requires __VA_ARGS__\""
+	IDE_DEFINE WISH_REQUIRES(...)
+
+	DEFINE -DWISH_GIT_BRANCH="${WISH_GIT_BRANCH}"
+	DEFINE -DWISH_GIT_COMMIT_HASH="${WISH_GIT_COMMIT_HASH}"
+	DEFINE -DWISH_SHORT_PATH_CUTOFF=${WISH_SHORT_PATH_CUTOFF}
+	DEFINE -DWISH_SHORT_PATH_PREFIX="${CMAKE_SOURCE_DIR}/"
+)
+
+wish_create_library(
+	PARENT libv
+	TARGET vm4imp
+	LINK PUBLIC libv::log libv::vm4 ext::assimp
+)
+
+// -------------------------------------------------------------------------------------------------
+
+Additional cmake.wish ideas 2:
+
+wish_config(
+	TARGET                      __PARENT_TARGET_____TARGET__
+	FOLDER                      __PARENT_FOLDER__/__TARGET__
+	ALIAS                       __PARENT_ALIAS__::__TARGET__
+	SOURCE                      src/__FOLDER__/*.cpp
+	HEADER                      src/__FOLDER__/*.hpp
+
+	RESULT_PATH_BINARY_APP      bin/__FOLDER__/
+	RESULT_PATH_BINARY_EXAMPLE  bin/__FOLDER__/
+	RESULT_PATH_BINARY_SANDBOX  bin/__FOLDER__/
+	RESULT_PATH_BINARY_TEST     bin/__FOLDER__/
+	RESULT_PATH_HEADER          include/__FOLDER__/
+	RESULT_PATH_LIBRARY_DYNAMIC lib/__FOLDER__/
+	RESULT_PATH_LIBRARY_STATIC  lib/__FOLDER__/
+)
+
+string(LENGTH ${CMAKE_SOURCE_DIR}_ WISH_SHORT_PATH_CUTOFF)
+set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+
+find_package(Threads REQUIRED)
+find_package(OpenGL REQUIRED)
+
+wish_create_base(
+	TARGET libv
+
+	WARNING GNU VERSION_GREATER 7.0 -Wduplicated-branches
+	WARNING GNU VERSION_GREATER 7.0 -Wrestrict
+	WARNING GNU VERSION_GREATER 7.0 -Wshadow-compatible-local
+	WARNING GNU VERSION_GREATER 8.0 -Wcast-align=strict
+	WARNING GNU VERSION_GREATER 8.0 -Wmultistatement-macros
+
+	MODE DEBUG
+		OPTION -Og
+		OPTION -ggdb3
+	MODE RELEASE
+		OPTION -O3
+		OPTION -static
+	MODE DEV
+		OPTION -O3
+
+	OPTION -m64
+	OPTION -std=c++2a
+	OPTION -fconcepts
+
+	DEFINE -Dconcept="concept bool"
+	DEFINE -D "WISH_REQUIRES\\(...\\)=\"requires __VA_ARGS__\""
+	IDE_DEFINE WISH_REQUIRES(...)
+
+	DEFINE -DWISH_GIT_BRANCH="${WISH_GIT_BRANCH}"
+	DEFINE -DWISH_GIT_COMMIT_HASH="${WISH_GIT_COMMIT_HASH}"
+	DEFINE -DWISH_SHORT_PATH_CUTOFF=${WISH_SHORT_PATH_CUTOFF}
+	DEFINE -DWISH_SHORT_PATH_PREFIX="${CMAKE_SOURCE_DIR}/"
+)
+
+wish_create_library(
+	PARENT libv
+	TARGET vm4imp
+	LINK PUBLIC libv::log libv::vm4 ext::assimp
+)
+
+// --- LUA Ideas -----------------------------------------------------------------------------------
+
+Additional lua.wish ideas:
+
+
+debug = mode("debug")
+release = mode("release")
+dev = mode("dev")
+
+config.target = "{PARENT_TARGET}_{TARGET}"
+config.folder = "{PARENT_FOLDER}/{TARGET}"
+config.alias  = "{PARENT_ALIAS}::{TARGET}"
+config.source = "src/{FOLDER}/**.cpp"
+config.header = "src/{FOLDER}/**.hpp"
+
+config.result_path_binary_app      = "bin/{FOLDER}/"
+config.result_path_binary_example  = "bin/{FOLDER}/"
+config.result_path_binary_sandbox  = "bin/{FOLDER}/"
+config.result_path_binary_test     = "bin/{FOLDER}/"
+config.result_path_header          = "include/{FOLDER}/"
+config.result_path_library_dynamic = "lib/{FOLDER}/"
+config.result_path_library_static  = "lib/{FOLDER}/"
+
+set.CMAKE_THREAD_PREFER_PTHREAD = "TRUE"
+set.THREADS_PREFER_PTHREAD_FLAG = "TRUE"
+
+find.package_require("Threads")
+find.package_require("OpenGL")
+
+
+ext_assimp = create_external("assimp", "https://github.com/assimp/assimp.git", "v5.0.0", {
+	BUILD_SHARED_LIBS = OFF,
+	CMAKE_EXPORT_COMPILE_COMMANDS = ON,
+	ASSIMP_BUILD_ASSIMP_TOOLS = OFF,
+	ASSIMP_BUILD_TESTS = OFF,
+	ASSIMP_BUILD_ZLIB = ON,
+	ASSIMP_NO_EXPORT = ON,
+
+	ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT = OFF,
+	ASSIMP_BUILD_FBX_IMPORTER = ON,
+})
+ext_assimp.link_public("assimp", "IrrXML", "zlibstatic")
+
+
+libv = create_base("libv")
+
+libv.warning("GNU VERSION_GREATER 7.0", "-Wduplicated-branches")
+libv.warning("GNU VERSION_GREATER 7.0", "-Wrestrict")
+libv.warning("GNU VERSION_GREATER 7.0", "-Wshadow-compatible-local")
+libv.warning("GNU VERSION_GREATER 8.0", "-Wcast-align=strict")
+libv.warning("GNU VERSION_GREATER 8.0", "-Wmultistatement-macros")
+
+libv.option(debug, "-Og")
+libv.option(debug, "--ggdb3")
+libv.option(release, "-O3")
+libv.option(release, "-static")
+libv.option(dev, "-O3")
+libv.option("-m64")
+libv.option("-std=c++2a")
+libv.option("-fconcepts")
+
+libv.define("concept=\"concept bool\"")
+libv.define("\"WISH_REQUIRES\\\\(...\\\\)=\\\"requires __VA_ARGS__\\\"\"")
+libv.ide_define("WISH_REQUIRES(...)")
+
+libv.define_wish_git_branch()
+libv.define_wish_git_commit()
+libv.define_wish_short_path_cutoff()
+libv.define_wish_short_path_prefix()
+
+libv_vm4imp = create_library(libv, "vm4imp");
+libv_vm4imp.link_public(libv_log libv_vm4 ext_assimp);
+
+
+// -------------------------------------------------------------------------------------------------
+
+Additional lua.wish ideas 2:
+
+
+debug = mode("debug")
+release = mode("release")
+dev = mode("dev")
+
+set.CMAKE_THREAD_PREFER_PTHREAD = "TRUE"
+set.THREADS_PREFER_PTHREAD_FLAG = "TRUE"
+find.package_require("Threads")
+find.package_require("OpenGL")
+
+
+ext_assimp = create_external("assimp", "https://github.com/assimp/assimp.git", "v5.0.0", {
+	BUILD_SHARED_LIBS = OFF,
+	CMAKE_EXPORT_COMPILE_COMMANDS = ON,
+	ASSIMP_BUILD_ASSIMP_TOOLS = OFF,
+	ASSIMP_BUILD_TESTS = OFF,
+	ASSIMP_BUILD_ZLIB = ON,
+	ASSIMP_NO_EXPORT = ON,
+
+	ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT = OFF,
+	ASSIMP_BUILD_FBX_IMPORTER = ON,
+})
+ext_assimp.link_public("assimp", "IrrXML", "zlibstatic")
+
+
+libv = create_base("libv")
+libv.warning_all()
+
+libv.option(debug, "-Og")
+libv.option(debug, "--ggdb3")
+libv.option(release, "-O3")
+libv.option(release, "-static")
+libv.option(dev, "-O3")
+libv.option("-m64")
+libv.option("-std=c++2a")
+libv.option("-fconcepts")
+
+libv.define("concept=\"concept bool\"")
+libv.define("\"WISH_REQUIRES\\\\(...\\\\)=\\\"requires __VA_ARGS__\\\"\"")
+libv.ide_define("WISH_REQUIRES(...)")
+
+libv.define_wish_git_branch()
+libv.define_wish_git_commit()
+libv.define_wish_short_path_cutoff()
+libv.define_wish_short_path_prefix()
+
+libv_vm4imp = create_library(libv, "vm4imp");
+libv_vm4imp.link_public(libv_log libv_vm4 ext_assimp);

@@ -9,6 +9,7 @@ include_guard(GLOBAL)
 # @Usage
 #	wish_configurations(
 #		debug
+#		optdebug
 #		dev
 #		DEFAULT release
 #		package
