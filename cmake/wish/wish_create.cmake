@@ -25,20 +25,19 @@ endmacro()
 # --- Group ----------------------------------------------------------------------------------------
 
 set(__wish_current_group)
-macro(wish_group name)
-	set(__wish_current_group ${name})
 
-	if (DEFINED __wish_group_${name})
-		return()
-	endif()
+function(wish_group name)
+	set(__wish_current_group ${name} PARENT_SCOPE)
 
-	set(__wish_group_${name})
-
-	add_custom_target(${name})
-	foreach(alias IN ITEMS ${ARGN})
-		add_custom_target(${alias} DEPENDS ${name})
-	endforeach()
-endmacro()
+	if (NOT TARGET ${name})
+		add_custom_target(${name})
+	endif ()
+	foreach (alias IN ITEMS ${ARGN})
+		if (NOT TARGET ${alias})
+			add_custom_target(${alias} DEPENDS ${name})
+		endif ()
+	endforeach ()
+endfunction()
 
 macro(__wish_add_member_to_group target)
 	if(__wish_current_group)
@@ -48,12 +47,16 @@ endmacro()
 
 # --- IDE / Build info -----------------------------------------------------------------------------
 
-set(__wish_external_include_directories)
-set(__wish_external_defines)
-set(__wish_external_raw_arguments "wish_version(${wish_version})")
+set(__wish_external_include_directories "" CACHE STRING "" FORCE)
+set(__wish_external_defines "" CACHE STRING "" FORCE)
+set(__wish_external_raw_arguments "wish_version(${wish_version})" CACHE STRING "" FORCE)
 
 ## Creates wish_ide target that can be used to obtain various information for IDEs
 function(wish_create_ide_target)
+	if (NOT PROJECT_IS_TOP_LEVEL)
+		return()
+	endif ()
+
 	# TODO P5: list targets / libraries / executables
 	add_custom_target(wish_ide
 		COMMAND ${CMAKE_COMMAND} -E echo "External include directories:"
@@ -89,7 +92,7 @@ function(wish_create_external)
 
 	set(temp_list ${__wish_external_raw_arguments})
 	list(APPEND temp_list ${ARGN})
-	set(__wish_external_raw_arguments ${temp_list} PARENT_SCOPE)
+	set(__wish_external_raw_arguments "${temp_list}" CACHE STRING "" FORCE)
 
 	# options
 	set(command_str_configure)
@@ -131,7 +134,7 @@ function(wish_create_external)
 		target_include_directories(ext_${arg_NAME} SYSTEM INTERFACE ${PATH_EXT}/${arg_NAME}/${var_include})
 		list(APPEND temp_list ${PATH_EXT_IDE}/${arg_NAME}/${var_include})
 	endforeach()
-	set(__wish_external_include_directories ${temp_list} PARENT_SCOPE)
+	set(ENV{__wish_external_include_directories} "${temp_list}")
 
 	# link
 	if(arg_LINK)
@@ -144,7 +147,7 @@ function(wish_create_external)
 		target_compile_definitions(ext_${arg_NAME} INTERFACE -D${var_define})
 		list(APPEND temp_list ${var_define})
 	endforeach()
-	set(__wish_external_defines ${temp_list} PARENT_SCOPE)
+	set(ENV{__wish_external_defines} "${temp_list}")
 
 	# group
 	if (NOT ${arg_NO_GROUP} AND ${__wish_configure_externals})
