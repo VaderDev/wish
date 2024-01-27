@@ -138,9 +138,9 @@ function(wish_create_external)
 
 	# link
 	if(arg_LINK)
-		link_directories(${PATH_EXT}/${arg_NAME}/lib)
+		target_link_directories(ext_${arg_NAME} INTERFACE ${PATH_EXT}/${arg_NAME}/lib)
+		target_link_libraries(ext_${arg_NAME} INTERFACE ${arg_LINK})
 	endif()
-	target_link_libraries(ext_${arg_NAME} INTERFACE ${arg_LINK})
 
 	set(temp_list ${__wish_external_defines})
 	foreach(var_define IN LISTS arg_DEFINE)
