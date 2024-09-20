@@ -21,7 +21,7 @@ wget https://raw.githubusercontent.com/VaderY/wish/master/cmake/wish.cmake -P cm
 Inside your root CMakeLists.txt file just set the version and include the primary script:
 TODO: More documentation
 ```
-set(WISH_REQUEST_VERSION v5.5.2)
+set(WISH_REQUEST_VERSION v5.5.3)
 include(cmake/wish.cmake)
 ```
 
@@ -32,6 +32,9 @@ include(cmake/wish.cmake)
 TODO: Format, place
 TODO: Auto self update the wish.cmake script (not just the wish/ folder)
 
+- v5.5.3
+  - Ensure '/' is present at the end of WISH_PATH_TO_*SOURCE
+  - Update repository URL
 - v5.5.2
   - Fix: Fix additional subdirectory issues with wish_create_external
 - v5.5.1
