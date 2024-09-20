@@ -33,8 +33,6 @@ int main(int argc, char** argv) {
 
 	wish::change_current_path(argc, argv);
 
-	int i = 0;
-
 	foo();
 	std::cout << "argv[0]: " << argv[0] << std::endl;
 	std::cout << "version_number: " << build.version_number << std::endl;
@@ -43,6 +41,9 @@ int main(int argc, char** argv) {
 	std::cout << "build_number: " << build.build_number << std::endl;
 	std::cout << "build_time: " << build.build_time << std::endl;
 	std::cout << "build_uuid: " << build.build_uuid << std::endl;
+
+	std::cout << "WISH_PATH_TO_SOURCE: " << WISH_PATH_TO_SOURCE << std::endl;
+	std::cout << "WISH_PATH_TO_CURRENT_SOURCE: " << WISH_PATH_TO_CURRENT_SOURCE << std::endl;
 
 	std::cout << "current_path: " << std::filesystem::current_path().generic_string() << std::endl;
 

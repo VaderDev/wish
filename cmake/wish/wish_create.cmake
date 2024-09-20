@@ -332,6 +332,15 @@ function(wish_create_executable)
 
 	file(RELATIVE_PATH path_to_current_source "${CMAKE_CURRENT_BINARY_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}")
 	file(RELATIVE_PATH path_to_source "${CMAKE_CURRENT_BINARY_DIR}" "${CMAKE_SOURCE_DIR}")
+
+	# Append '/' at the end of the paths when they are not empty and missing the '/'
+	if(path_to_current_source AND NOT path_to_current_source MATCHES "/$")
+	    string(APPEND path_to_current_source "/")
+	endif()
+	if(path_to_source AND NOT path_to_source MATCHES "/$")
+	    string(APPEND path_to_source "/")
+	endif()
+
 	target_compile_definitions(${arg_TARGET} PRIVATE WISH_PATH_TO_CURRENT_SOURCE="${path_to_current_source}")
 	target_compile_definitions(${arg_TARGET} PRIVATE WISH_PATH_TO_SOURCE="${path_to_source}")
 
