@@ -13,9 +13,7 @@ TODO: Documentation
 Grab the latest wish hook script from your project's root
 TODO: More documentation
 ```
-mkdir -p cmake && wget https://raw.githubusercontent.com/VaderY/wish/master/cmake/wish.cmake -O cmake/wish.cmake
-# OR
-wget https://raw.githubusercontent.com/VaderY/wish/master/cmake/wish.cmake -P cmake/
+wget https://raw.githubusercontent.com/VaderDev/wish/main/cmake/wish.cmake -P cmake/ -O cmake/wish.cmake
 ```
 
 Inside your root CMakeLists.txt file just set the version and include the primary script:
