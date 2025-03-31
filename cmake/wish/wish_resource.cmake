@@ -65,8 +65,11 @@ function(wish_resource_mapping)
 		cmake_path(SET target_path ${it_target})
 		cmake_path(GET target_path FILENAME target_filename)
 		cmake_path(GET target_path PARENT_PATH target_dir)
+		if (target_dir STREQUAL "")
+			set(target_dir ".")
+		endif ()
 
-		install(FILES "${arg_RELATIVE}/${it_match}" DESTINATION "./${target_dir}" RENAME "${target_filename}" COMPONENT ${arg_TARGET})
+		install(FILES "${arg_RELATIVE}/${it_match}" DESTINATION "${target_dir}" RENAME "${target_filename}" COMPONENT ${arg_TARGET})
 	endforeach ()
 
 	# Build configure mapping string
