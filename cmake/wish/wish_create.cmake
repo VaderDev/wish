@@ -266,6 +266,7 @@ function(__wish_generate out_generated_outputs)
 					COMMAND ${__wish_generator_command_${generator}} ${matching_file} ${output_files_rel}
 					DEPENDS ${generator} ${matching_file} ${__wish_generator_depends_${generator}}
 					WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+					# CODEGEN # Requires cmake_policy(SET CMP0171 NEW)
 			)
 
 			list(APPEND generated_outputs ${output_files_abs})

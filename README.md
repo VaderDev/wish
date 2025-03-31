@@ -31,6 +31,7 @@ TODO: Format, place
 TODO: Auto self update the wish.cmake script (not just the wish/ folder)
 
 - v5.5.4
+  - Fix CMP0171 by renaming codegen to vcodegen
   - Fix CMP0177 warnings
 - v5.5.3
   - Ensure '/' is present at the end of WISH_PATH_TO_*SOURCE

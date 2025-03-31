@@ -187,8 +187,8 @@ wish_create_external(
 wish_group(group_application app) # --- Application -----------------------------------------------
 
 wish_create_executable(
-	TARGET codegen
-	SOURCE app/codegen/codegen_main.cpp
+	TARGET vcodegen
+	SOURCE app/vcodegen/codegen_main.cpp
 	LINK   ext_fmt ext_sol2
 #	LINK   ext_fmt ext_range libv_lua libv_utility libv_algo
 )
@@ -198,8 +198,8 @@ wish_create_executable(
 wish_group(group_generator generator) # --- Generator ---------------------------------------------
 
 wish_generator(
-	TARGET  codegen
-	COMMAND codegen
+	TARGET  vcodegen
+	COMMAND vcodegen
 #	OUTPUT REPLACE ".in.lua" ".hpp"
 	OUTPUT REPLACE ".inh.lua" ".hpp"
 	OUTPUT REPLACE ".ins.lua" ".hpp"
@@ -211,7 +211,7 @@ wish_group(group_library lib) # --- Library ------------------------------------
 wish_create_library(
 	TARGET libA STATIC
 	SOURCE src/libA/*.cpp
-	GENERATE codegen src/libA/*.in?.lua
+	GENERATE vcodegen src/libA/*.in?.lua
 	LINK   Threads::Threads
 )
 
