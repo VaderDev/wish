@@ -47,6 +47,8 @@ endmacro()
 
 # --- IDE / Build info -----------------------------------------------------------------------------
 
+set(__wish_current_target)
+
 set(__wish_external_include_directories "" CACHE STRING "" FORCE)
 set(__wish_external_defines "" CACHE STRING "" FORCE)
 set(__wish_external_raw_arguments "wish_version(${wish_version})" CACHE STRING "" FORCE)
@@ -286,10 +288,8 @@ endfunction()
 function(wish_create_executable)
 	cmake_parse_arguments(PARSE_ARGV 0 arg "DEBUG;NO_GROUP" "TARGET;OUTPUT_NAME" "SOURCE;CONFIGURE_SOURCE;OBJECT;GENERATE;LINK")
 
-	# check
-	if(NOT arg_SOURCE AND NOT arg_OBJECT)
-		message(FATAL_ERROR "At least one SOURCE or OBJECT should be given.")
-	endif()
+	# set __wish_current_target
+	set(__wish_current_target "${arg_TARGET}" PARENT_SCOPE)
 
 	# generated files
 	if(arg_GENERATE)
@@ -297,7 +297,10 @@ function(wish_create_executable)
 	endif()
 
 	# glob
-	file(GLOB_RECURSE matching_sources LIST_DIRECTORIES false RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS ${arg_SOURCE})
+	set(matching_sources)
+	if(arg_SOURCE)
+		file(GLOB_RECURSE matching_sources LIST_DIRECTORIES false RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS ${arg_SOURCE})
+	endif()
 	if(arg_CONFIGURE_SOURCE)
 		file(GLOB_RECURSE matching_configure_sources LIST_DIRECTORIES false RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS ${arg_CONFIGURE_SOURCE})
 	endif()
@@ -379,17 +382,14 @@ endfunction()
 function(wish_create_library)
 	cmake_parse_arguments(PARSE_ARGV 0 arg "DEBUG;NO_GROUP;STATIC;SHARED;INTERFACE" "TARGET" "ALIAS;SOURCE;CONFIGURE_SOURCE;OBJECT;GENERATE;LINK")
 
-	# check
-#	if(NOT arg_SOURCE AND NOT arg_OBJECT)
-#		message(FATAL_ERROR "At least one SOURCE or OBJECT should be given.")
-#		# TODO P5: Target might be INTERFACE
-#	endif()
-
 	# Detect and remap alias named target
 	if (${arg_TARGET} MATCHES "::")
 		list(APPEND arg_ALIAS ${arg_TARGET})
 		string(REPLACE "::" "_" arg_TARGET ${arg_TARGET})
 	endif()
+
+	# set __wish_current_target
+	set(__wish_current_target "${arg_TARGET}" PARENT_SCOPE)
 
 	# generated files
 	if(arg_GENERATE)
@@ -397,6 +397,7 @@ function(wish_create_library)
 	endif()
 
 	# glob
+	set(matching_sources)
 	if(arg_SOURCE)
 		file(GLOB_RECURSE matching_sources LIST_DIRECTORIES false RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS ${arg_SOURCE})
 	endif()
@@ -472,10 +473,8 @@ endfunction()
 function(wish_create_object)
 	cmake_parse_arguments(PARSE_ARGV 0 arg "DEBUG;NO_GROUP" "TARGET" "SOURCE;CONFIGURE_SOURCE;OBJECT;GENERATE;LINK")
 
-	# check
-	if(NOT arg_SOURCE AND NOT arg_OBJECT)
-		message(FATAL_ERROR "At least one SOURCE or OBJECT should be given.")
-	endif()
+	# set __wish_current_target
+	set(__wish_current_target "${arg_TARGET}" PARENT_SCOPE)
 
 	# generated files
 	if(arg_GENERATE)
@@ -483,7 +482,10 @@ function(wish_create_object)
 	endif()
 
 	# glob
-	file(GLOB_RECURSE matching_sources LIST_DIRECTORIES false RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS ${arg_SOURCE})
+	set(matching_sources)
+	if(arg_SOURCE)
+		file(GLOB_RECURSE matching_sources LIST_DIRECTORIES false RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS ${arg_SOURCE})
+	endif()
 	if(arg_CONFIGURE_SOURCE)
 		file(GLOB_RECURSE matching_configure_sources LIST_DIRECTORIES false RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS ${arg_CONFIGURE_SOURCE})
 	endif()
@@ -526,6 +528,97 @@ function(wish_create_object)
 		message("	NoGroup   : ${arg_NO_GROUP}")
 		message("	Group     : ${__wish_current_group}")
 	endif()
+endfunction()
+
+# ==================================================================================================
+# A better, distributed API approach
+
+### Add files to the given file_set and visibility for the target
+### @param TARGET: <target>
+### @param FILE_SET: SOURCE | HEADER | MODULE
+### @param VISIBILITY: INTERFACE | PUBLIC | PRIVATE
+### @param ...: <wish-glob-expression>
+function (wish_source_target arg_TARGET arg_FILE_SET arg_VISIBILITY)
+#	cmake_parse_arguments(PARSE_ARGV 2 arg "" "" "")
+#	list(SUBLIST ARGN 2 -1 arg_SOURCE)
+	set(arg_SOURCE ${ARGN})
+
+	# Arg checks
+	if (NOT arg_TARGET)
+		message(FATAL_ERROR "Missing target")
+	endif ()
+
+	if (NOT arg_VISIBILITY)
+		message(FATAL_ERROR "Missing visibility INTERFACE|PUBLIC|PRIVATE")
+	endif ()
+	set(VALID_VISIBILITIES INTERFACE PUBLIC PRIVATE)
+	if (NOT arg_VISIBILITY IN_LIST VALID_VISIBILITIES)
+		message(FATAL_ERROR "Invalid visibility \"${arg_VISIBILITY}\". Value must be one of INTERFACE|PUBLIC|PRIVATE")
+	endif ()
+
+	if (NOT arg_FILE_SET)
+		message(FATAL_ERROR "Missing file set SOURCE|HEADER|MODULE")
+	endif ()
+	set(VALID_FILE_SETS SOURCE HEADER MODULE)
+	if (NOT arg_FILE_SET IN_LIST VALID_FILE_SETS)
+		message(FATAL_ERROR "Invalid file set \"${arg_FILE_SET}\". Value must be one of SOURCE|HEADER|MODULE")
+	endif ()
+
+	# Remap FIL_SET values to cmake ones
+	if (arg_FILE_SET STREQUAL "SOURCE")
+		set(FILE_SET)
+	elseif (arg_FILE_SET STREQUAL "HEADER")
+		set(FILE_SET FILE_SET src_${arg_VISIBILITY}_${arg_FILE_SET} TYPE HEADERS FILES)
+	elseif (arg_FILE_SET STREQUAL "MODULE")
+		set(FILE_SET FILE_SET src_${arg_VISIBILITY}_${arg_FILE_SET} TYPE CXX_MODULES FILES)
+	endif ()
+
+	# Glob
+	file(GLOB_RECURSE matching_sources LIST_DIRECTORIES false RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" CONFIGURE_DEPENDS ${arg_SOURCE})
+
+	# Add
+	if (matching_sources)
+		target_sources(${arg_TARGET} ${arg_VISIBILITY} ${FILE_SET} ${matching_sources})
+	endif ()
+endfunction()
+
+### Add files to the given file_set and visibility for the target that
+### was last created with wish_create_executable, wish_create_library, or wish_create_object
+### @param FILE_SET: SOURCE | HEADER | MODULE
+### @param VISIBILITY: INTERFACE | PUBLIC | PRIVATE
+### @param ...: <wish-glob-expression>
+function (wish_source arg_FILE_SET arg_VISIBILITY)
+	wish_source_target(${__wish_current_target} ${arg_FILE_SET} ${arg_VISIBILITY} ${ARGN})
+endfunction()
+
+# -------------------------------------------------------------------------------------------------
+
+### @param TARGET: <target>
+### @param VISIBILITY: INTERFACE | PUBLIC | PRIVATE
+### @param ...: <linkable-targets>
+function (wish_link_target arg_TARGET arg_VISIBILITY)
+	set(arg_LINKS ${ARGN})
+
+	# Arg checks
+	if (NOT arg_TARGET)
+		message(FATAL_ERROR "Missing target")
+	endif ()
+
+	if (NOT arg_VISIBILITY)
+		message(FATAL_ERROR "Missing visibility INTERFACE|PUBLIC|PRIVATE")
+	endif ()
+	set(VALID_VISIBILITIES INTERFACE PUBLIC PRIVATE)
+	if (NOT arg_VISIBILITY IN_LIST VALID_VISIBILITIES)
+		message(FATAL_ERROR "Invalid visibility \"${arg_VISIBILITY}\". Value must be one of INTERFACE|PUBLIC|PRIVATE")
+	endif ()
+
+	target_link_libraries(${arg_TARGET} ${arg_VISIBILITY} ${arg_LINKS})
+endfunction()
+
+### @param VISIBILITY: INTERFACE | PUBLIC | PRIVATE
+### @param ...: <linkable-targets>
+function (wish_link arg_VISIBILITY)
+	wish_link_target(${__wish_current_target} ${arg_VISIBILITY} ${ARGN})
 endfunction()
 
 # --------------------------------------------------------------------------------------------------

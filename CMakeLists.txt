@@ -248,6 +248,7 @@ wish_create_executable(
 include_directories(sandbox)
 add_subdirectory(sandbox/aliases)
 add_subdirectory(sandbox/smart_aliases)
+add_subdirectory(sandbox/target_source)
 add_subdirectory(sandbox/versions)
 
 # -------------------------------------------------------------------------------------------------
