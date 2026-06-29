@@ -19,7 +19,7 @@ wget https://raw.githubusercontent.com/VaderDev/wish/main/cmake/wish.cmake -P cm
 Inside your root CMakeLists.txt file just set the version and include the primary script:
 TODO: More documentation
 ```
-set(WISH_REQUEST_VERSION v5.5.4)
+set(WISH_REQUEST_VERSION v5.6.0)
 include(cmake/wish.cmake)
 ```
 
