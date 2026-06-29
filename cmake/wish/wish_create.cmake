@@ -26,15 +26,25 @@ endmacro()
 
 set(__wish_current_group)
 
-function(wish_group name)
-	set(__wish_current_group ${name} PARENT_SCOPE)
-
-	if (NOT TARGET ${name})
-		add_custom_target(${name})
+### wish_group()
+### wish_group(name)
+### wish_group(name [aliases]...)
+function(wish_group)
+	if (ARGC EQUAL 0)
+		unset(__wish_current_group PARENT_SCOPE)
+		return()
 	endif ()
-	foreach (alias IN ITEMS ${ARGN})
-		if (NOT TARGET ${alias})
-			add_custom_target(${alias} DEPENDS ${name})
+
+	set(name "${ARGV0}")
+	set(__wish_current_group "${name}" PARENT_SCOPE)
+
+	if (NOT TARGET "${name}")
+		add_custom_target("${name}")
+	endif ()
+
+	foreach (alias IN LISTS ARGN)
+		if (NOT TARGET "${alias}")
+			add_custom_target("${alias}" DEPENDS "${name}")
 		endif ()
 	endforeach ()
 endfunction()

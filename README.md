@@ -30,6 +30,10 @@ include(cmake/wish.cmake)
 TODO: Format, place
 TODO: Auto self update the wish.cmake script (not just the wish/ folder)
 
+- v5.6.0
+  - Feature: Add wish_source and wish_link
+  - Improvement: Improve wish_group to reset on zero argument
+  - Improvement: Update wish_force_colored_output to use CMAKE_COLOR_DIAGNOSTICS
 - v5.5.4
   - Fix CMP0171 by renaming codegen to vcodegen
   - Fix CMP0177 warnings
