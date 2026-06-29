@@ -4,6 +4,7 @@ include_guard(GLOBAL)
 
 include(ExternalProject)
 
+include(cmake/wish/wish_color.cmake)
 include(cmake/wish/wish_configuration.cmake)
 include(cmake/wish/wish_create.cmake)
 include(cmake/wish/wish_debug.cmake)
@@ -18,24 +19,6 @@ include(cmake/wish/wish_version.cmake)
 # -------------------------------------------------------------------------------------------------
 
 message(STATUS "Wish: Version: ${wish_version}")
-
-# -------------------------------------------------------------------------------------------------
-
-macro(wish_force_colored_output value)
-	if (${value})
-		if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-			message(STATUS "Wish: Force colored output: GCC")
-			add_compile_options(-fdiagnostics-color=always)
-		elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-			message(STATUS "Wish: Force colored output: Clang")
-			add_compile_options(-fcolor-diagnostics)
-		else()
-			message(STATUS "Wish: Force colored output: False (Unknown compiler)")
-		endif()
-	else()
-		message(STATUS "Wish: Force colored output: False")
-	endif()
-endmacro()
 
 # -------------------------------------------------------------------------------------------------
 
