@@ -574,6 +574,10 @@ function (wish_source_target arg_TARGET arg_FILE_SET arg_VISIBILITY)
 		message(FATAL_ERROR "Invalid file set \"${arg_FILE_SET}\". Value must be one of SOURCE|HEADER|MODULE")
 	endif ()
 
+	if (NOT arg_SOURCE)
+		return()
+	endif ()
+
 	# Remap FIL_SET values to cmake ones
 	if (arg_FILE_SET STREQUAL "SOURCE")
 		set(FILE_SET)
@@ -620,6 +624,10 @@ function (wish_link_target arg_TARGET arg_VISIBILITY)
 	set(VALID_VISIBILITIES INTERFACE PUBLIC PRIVATE)
 	if (NOT arg_VISIBILITY IN_LIST VALID_VISIBILITIES)
 		message(FATAL_ERROR "Invalid visibility \"${arg_VISIBILITY}\". Value must be one of INTERFACE|PUBLIC|PRIVATE")
+	endif ()
+
+	if (NOT arg_LINKS)
+		return()
 	endif ()
 
 	target_link_libraries(${arg_TARGET} ${arg_VISIBILITY} ${arg_LINKS})

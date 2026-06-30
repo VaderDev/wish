@@ -19,7 +19,7 @@ wget https://raw.githubusercontent.com/VaderDev/wish/main/cmake/wish.cmake -P cm
 Inside your root CMakeLists.txt file just set the version and include the primary script:
 TODO: More documentation
 ```
-set(WISH_REQUEST_VERSION v5.6.0)
+set(WISH_REQUEST_VERSION v5.6.1)
 include(cmake/wish.cmake)
 ```
 
@@ -30,6 +30,8 @@ include(cmake/wish.cmake)
 TODO: Format, place
 TODO: Auto self update the wish.cmake script (not just the wish/ folder)
 
+- v5.6.1
+  - Improvement: Improve wish_source and wish_link to support zero source/link argument
 - v5.6.0
   - Feature: Add wish_source and wish_link
   - Improvement: Improve wish_group to reset on zero argument
